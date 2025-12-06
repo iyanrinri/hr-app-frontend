@@ -3,19 +3,28 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { Users, LayoutDashboard, LogOut, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Users, LayoutDashboard, LogOut, ChevronLeft, ChevronRight, Calendar, Clock } from 'lucide-react';
 import { useLogout } from '@/hooks/useAuth';
+import { useAuthStore } from '@/store/authStore';
 import { useState } from 'react';
 
 const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'Employees', href: '/dashboard/employees', icon: Users },
+  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, roles: ['SUPER', 'HR', 'EMPLOYEE'] },
+  { name: 'My Attendance', href: '/dashboard/attendance', icon: Clock, roles: ['SUPER', 'HR', 'EMPLOYEE'] },
+  { name: 'Employees', href: '/dashboard/employees', icon: Users, roles: ['SUPER', 'HR', 'EMPLOYEE'] },
+  { name: 'Attendance Periods', href: '/dashboard/attendance-periods', icon: Calendar, roles: ['SUPER', 'HR'] },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
   const logout = useLogout();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const user = useAuthStore((state) => state.user);
+
+  // Filter navigation items based on user role
+  const filteredNavigation = navigation.filter((item) => 
+    !item.roles || (user?.role && item.roles.includes(user.role))
+  );
 
   return (
     <div className={cn(
@@ -39,7 +48,7 @@ export function Sidebar() {
         </button>
       </div>
       <nav className="flex-1 px-2 py-4 space-y-1">
-        {navigation.map((item) => {
+        {filteredNavigation.map((item) => {
           const isActive = pathname === item.href;
           return (
             <Link
