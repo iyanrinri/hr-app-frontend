@@ -3,14 +3,16 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { Users, LayoutDashboard, LogOut, ChevronLeft, ChevronRight, Calendar, Clock } from 'lucide-react';
+import { Users, LayoutDashboard, LogOut, ChevronLeft, ChevronRight, Calendar, Clock, Bell } from 'lucide-react';
 import { useLogout } from '@/hooks/useAuth';
 import { useAuthStore } from '@/store/authStore';
+import { useNotifications } from '@/hooks/useNotifications';
 import { useState } from 'react';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, roles: ['SUPER', 'HR', 'EMPLOYEE'] },
   { name: 'My Attendance', href: '/dashboard/attendance', icon: Clock, roles: ['SUPER', 'HR', 'EMPLOYEE'] },
+  { name: "Today's Attendance", href: '/dashboard/attendance/today', icon: Bell, roles: ['SUPER', 'HR'] },
   { name: 'Employees', href: '/dashboard/employees', icon: Users, roles: ['SUPER', 'HR', 'EMPLOYEE'] },
   { name: 'Attendance Periods', href: '/dashboard/attendance-periods', icon: Calendar, roles: ['SUPER', 'HR'] },
 ];
@@ -20,6 +22,7 @@ export function Sidebar() {
   const logout = useLogout();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const user = useAuthStore((state) => state.user);
+  const { unreadCount } = useNotifications();
 
   // Filter navigation items based on user role
   const filteredNavigation = navigation.filter((item) => 
@@ -50,12 +53,15 @@ export function Sidebar() {
       <nav className="flex-1 px-2 py-4 space-y-1">
         {filteredNavigation.map((item) => {
           const isActive = pathname === item.href;
+          const isTodayAttendance = item.href === '/dashboard/attendance/today';
+          const showBadge = isTodayAttendance && unreadCount > 0;
+          
           return (
             <Link
               key={item.name}
               href={item.href}
               className={cn(
-                'flex items-center px-4 py-2 text-sm font-medium rounded-md transition-colors',
+                'flex items-center px-4 py-2 text-sm font-medium rounded-md transition-colors relative',
                 isActive
                   ? 'bg-brand-light text-brand-navy'
                   : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
@@ -65,6 +71,11 @@ export function Sidebar() {
             >
               <item.icon className={cn('w-5 h-5', !isCollapsed && 'mr-3')} />
               {!isCollapsed && item.name}
+              {showBadge && (
+                <span className="ml-auto bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
+              )}
             </Link>
           );
         })}

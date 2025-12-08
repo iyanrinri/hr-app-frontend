@@ -206,7 +206,7 @@ export default function AttendancePage() {
               </Button>
               <Button
                 onClick={handleClockOut}
-                disabled={clockingOut || isGettingLocation || !todayAttendance?.checkIn || !!todayAttendance?.checkOut}
+                disabled={clockingOut || isGettingLocation || !todayAttendance?.checkIn}
                 variant="secondary"
                 className="py-6 text-lg"
               >
@@ -235,19 +235,19 @@ export default function AttendancePage() {
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="text-center p-4 bg-green-50 rounded-lg">
-                <p className="text-3xl font-bold text-green-600">{stats.totalPresent}</p>
+                <p className="text-3xl font-bold text-green-600">{stats.statusCounts.PRESENT || 0}</p>
                 <p className="text-sm text-gray-600 mt-1">Present</p>
               </div>
               <div className="text-center p-4 bg-red-50 rounded-lg">
-                <p className="text-3xl font-bold text-red-600">{stats.totalAbsent}</p>
+                <p className="text-3xl font-bold text-red-600">{stats.statusCounts.ABSENT || 0}</p>
                 <p className="text-sm text-gray-600 mt-1">Absent</p>
               </div>
               <div className="text-center p-4 bg-yellow-50 rounded-lg">
-                <p className="text-3xl font-bold text-yellow-600">{stats.totalLate}</p>
+                <p className="text-3xl font-bold text-yellow-600">{stats.statusCounts.LATE || 0}</p>
                 <p className="text-sm text-gray-600 mt-1">Late</p>
               </div>
               <div className="text-center p-4 bg-blue-50 rounded-lg">
-                <p className="text-3xl font-bold text-blue-600">{stats.averageHours ? (stats.averageHours / 60).toFixed(1) : '0.0'}h</p>
+                <p className="text-3xl font-bold text-blue-600">{stats.averageWorkDuration ? (stats.averageWorkDuration / 60).toFixed(1) : '0.0'}h</p>
                 <p className="text-sm text-gray-600 mt-1">Avg Hours</p>
               </div>
             </div>

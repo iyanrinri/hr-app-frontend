@@ -54,12 +54,15 @@ export interface AttendanceHistory {
 }
 
 export interface AttendanceStats {
-  totalPresent: number;
-  totalAbsent: number;
-  totalLate: number;
-  totalExcused: number;
-  averageHours: number;
-  attendanceRate: number;
+  statusCounts: {
+    PRESENT?: number;
+    ABSENT?: number;
+    LATE?: number;
+    EXCUSED?: number;
+  };
+  totalWorkDuration: number; // in minutes
+  totalWorkDays: number;
+  averageWorkDuration: number; // in minutes
 }
 
 export interface ClockInOutPayload {
@@ -167,5 +170,55 @@ export const useAttendanceStats = (
       return data;
     },
     enabled: !!startDate && !!endDate,
+  });
+};
+
+// Today's Attendance Dashboard Interfaces
+export interface TodayAttendanceEmployee {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  department: string;
+  position: string;
+  checkIn?: any;
+  checkOut?: any;
+  status?: 'PRESENT' | 'ABSENT' | 'LATE' | 'EXCUSED';
+  isLate?: boolean;
+  minutesLate?: number;
+  workDuration?: number; // in minutes
+}
+
+export interface TodayAttendanceDashboard {
+  date: string;
+  summary: {
+    totalEmployees: number;
+    totalPresent: number;
+    totalAbsent: number;
+    totalLate: number;
+    attendanceRate: number;
+    lateRate: number;
+    onTimeRate: number;
+  };
+  presentEmployees: TodayAttendanceEmployee[];
+  absentEmployees: TodayAttendanceEmployee[];
+  lateEmployees: TodayAttendanceEmployee[];
+  attendancePeriod: {
+    id: string;
+    name: string;
+    workingStartTime: string;
+    workingEndTime: string;
+    toleranceMinutes: number;
+  };
+}
+
+// Get Today's Attendance Dashboard
+export const useTodayAttendanceDashboard = () => {
+  return useQuery({
+    queryKey: ['attendance', 'dashboard', 'today'],
+    queryFn: async () => {
+      const { data } = await api.get<TodayAttendanceDashboard>('/attendance/dashboard/today');
+      return data;
+    },
   });
 };
