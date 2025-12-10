@@ -41,12 +41,18 @@ export default function SettingsTabContent({ category }: SettingsTabContentProps
 
   const settings = data?.data || [];
   
-  const latSetting = settings.find(s => s.key === 'checkPointLatitude');
-  const lngSetting = settings.find(s => s.key === 'checkPointLongitude');
-  const radiusSetting = settings.find(s => s.key === 'checkPointRadius');
-  const addressSetting = settings.find(s => s.key === 'checkPointAddress');
+  // Find location specific settings
+  const latSetting = settings.find(s => s.key === 'attendance_checkpoint_lat');
+  const lngSetting = settings.find(s => s.key === 'attendance_checkpoint_lng');
+  const radiusSetting = settings.find(s => s.key === 'attendance_checkpoint_radius');
+  const addressSetting = settings.find(s => s.key === 'attendance_checkpoint_address');
 
+  const locationKeys = ['attendance_checkpoint_lat', 'attendance_checkpoint_lng', 'attendance_checkpoint_radius', 'attendance_checkpoint_address'];
   const showMap = category === SettingCategory.ATTENDANCE;
+  
+  const otherSettings = showMap 
+    ? settings.filter(s => !locationKeys.includes(s.key))
+    : settings;
 
   return (
     <div className="space-y-6 max-w-4xl">
@@ -54,8 +60,8 @@ export default function SettingsTabContent({ category }: SettingsTabContentProps
         <p className="text-gray-500 italic">No settings found for this category.</p>
       ) : (
         <div className="grid gap-6">
-          {settings.map((setting) => (
-             // Use value in key to reset state when value changes (e.g. invalidation)
+          {/* Render non-location settings first (like allowWeekendWork etc) */}
+          {otherSettings.map((setting) => (
              <SettingItem key={`${setting.id}-${setting.value}`} setting={setting} />
           ))}
         </div>
@@ -63,22 +69,32 @@ export default function SettingsTabContent({ category }: SettingsTabContentProps
 
       {showMap && (
         <div className="mt-8 border-t pt-8">
-          <h3 className="text-lg font-medium text-brand-navy mb-4">Check Point Location</h3>
-          {/* @ts-expect-error - props type mismatch with dynamic component */}
-          <AttendanceMap 
-             latitude={parseFloat(String(latSetting?.value || '0'))}
-             longitude={parseFloat(String(lngSetting?.value || '0'))}
-             radius={parseFloat(String(radiusSetting?.value || '100'))}
-             address={String(addressSetting?.value || '')}
-             onLocationSelect={(lat: number, lng: number, addr?: string) => {
-                if (latSetting) updateMutation.mutate({ key: latSetting.key, value: lat });
-                if (lngSetting) updateMutation.mutate({ key: lngSetting.key, value: lng });
-                if (addr && addressSetting) updateMutation.mutate({ key: addressSetting.key, value: addr });
-             }}
-             onRadiusChange={(radius: number) => {
-                if (radiusSetting) updateMutation.mutate({ key: radiusSetting.key, value: radius });
-             }}
-          />
+          <h3 className="text-lg font-medium text-brand-navy mb-6">Attendance Check Point</h3>
+          
+          <div className="mb-6 grid gap-6">
+             {/* Explicitly render location settings in desired order */}
+             {addressSetting && <SettingItem key={`${addressSetting.id}-${addressSetting.value}`} setting={addressSetting} />}
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {latSetting && <SettingItem key={`${latSetting.id}-${latSetting.value}`} setting={latSetting} />}
+                {lngSetting && <SettingItem key={`${lngSetting.id}-${lngSetting.value}`} setting={lngSetting} />}
+             </div>
+             {radiusSetting && <SettingItem key={`${radiusSetting.id}-${radiusSetting.value}`} setting={radiusSetting} />}
+          </div>
+
+          <div className="rounded-lg overflow-hidden border border-gray-200">
+            {/* @ts-expect-error - props type mismatch with dynamic component */}
+            <AttendanceMap 
+               key={`${latSetting?.value}-${lngSetting?.value}`}
+               latitude={parseFloat(String(latSetting?.value || '0'))}
+               longitude={parseFloat(String(lngSetting?.value || '0'))}
+               radius={parseFloat(String(radiusSetting?.value || '100'))}
+               onLocationSelect={(lat: number, lng: number) => {
+                  updateMutation.mutate({ key: 'attendance_checkpoint_lat', value: String(lat) });
+                  updateMutation.mutate({ key: 'attendance_checkpoint_lng', value: String(lng) });
+                  // We don't update address automatically from map click unless we have geocoding.
+               }}
+            />
+          </div>
         </div>
       )}
     </div>

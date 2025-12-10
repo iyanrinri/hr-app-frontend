@@ -13,7 +13,7 @@ const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, roles: ['SUPER', 'HR', 'EMPLOYEE'] },
   { name: 'My Attendance', href: '/dashboard/attendance', icon: Clock, roles: ['SUPER', 'HR', 'EMPLOYEE'] },
   { name: "Today's Attendance", href: '/dashboard/attendance/today', icon: Bell, roles: ['SUPER', 'HR'] },
-  { name: 'Employees', href: '/dashboard/employees', icon: Users, roles: ['SUPER', 'HR', 'EMPLOYEE'] },
+  { name: 'Employees', href: '/dashboard/employees', icon: Users, roles: ['SUPER', 'HR'] },
   { name: 'Attendance Periods', href: '/dashboard/attendance-periods', icon: Calendar, roles: ['SUPER', 'HR'] },
   { name: 'Settings', href: '/dashboard/settings', icon: Settings, roles: ['SUPER'] },
 ];

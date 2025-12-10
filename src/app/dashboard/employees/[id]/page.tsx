@@ -9,7 +9,8 @@ import { Input } from '@/components/ui/Input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { useRouter, useParams } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { HierarchyManager } from '@/components/employees/HierarchyManager';
 
 const employeeSchema = z.object({
   firstName: z.string().min(2, 'First Name must be at least 2 characters'),
@@ -40,6 +41,8 @@ export default function EditEmployeePage() {
     resolver: zodResolver(employeeSchema),
   });
 
+  const [activeTab, setActiveTab] = useState<'details' | 'management'>('details');
+
   useEffect(() => {
     if (employee) {
       reset({
@@ -63,32 +66,8 @@ export default function EditEmployeePage() {
     updateEmployee(payload);
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-navy mb-4"></div>
-        <p className="text-gray-600">Loading employee details...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="p-6 text-center">
-        <p className="text-red-600 mb-4">Error loading employee details</p>
-        <Button onClick={() => router.back()}>Go Back</Button>
-      </div>
-    );
-  }
-
-  if (!employee) {
-    return (
-      <div className="p-6 text-center">
-        <p className="text-red-600 mb-4">Employee not found</p>
-        <Button onClick={() => router.back()}>Go Back</Button>
-      </div>
-    );
-  }
+  if (isLoading) return <div className="text-center py-12">Loading...</div>;
+  if (error || !employee) return <div className="text-center py-12 text-red-500">Error loading employee</div>;
 
   return (
     <div className="space-y-6">
@@ -100,65 +79,92 @@ export default function EditEmployeePage() {
         <h2 className="text-2xl font-bold text-gray-900">Edit Employee</h2>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Employee Details</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Input
-                label="First Name"
-                error={errors.firstName?.message}
-                {...register('firstName')}
-              />
-              <Input
-                label="Last Name"
-                error={errors.lastName?.message}
-                {...register('lastName')}
-              />
-              <Input
-                label="Email Address"
-                type="email"
-                error={errors.email?.message}
-                {...register('email')}
-              />
-              <Input
-                label="Password (leave empty to keep current)"
-                type="password"
-                placeholder="Enter new password or leave empty"
-                error={errors.password?.message}
-                {...register('password')}
-              />
-              <Input
-                label="Position"
-                error={errors.position?.message}
-                {...register('position')}
-              />
-              <Input
-                label="Department"
-                error={errors.department?.message}
-                {...register('department')}
-              />
-              <Input
-                label="Base Salary"
-                type="number"
-                error={errors.baseSalary?.message}
-                {...register('baseSalary')}
-              />
-            </div>
+      <div className="flex gap-4 border-b border-gray-200">
+        <button
+          className={`px-4 py-2 font-medium text-sm transition-colors border-b-2 ${
+            activeTab === 'details' 
+              ? 'border-brand-navy text-brand-navy' 
+              : 'border-transparent text-gray-500 hover:text-gray-700'
+          }`}
+          onClick={() => setActiveTab('details')}
+        >
+          Employee Details
+        </button>
+        <button
+          className={`px-4 py-2 font-medium text-sm transition-colors border-b-2 ${
+            activeTab === 'management' 
+              ? 'border-brand-navy text-brand-navy' 
+              : 'border-transparent text-gray-500 hover:text-gray-700'
+          }`}
+          onClick={() => setActiveTab('management')}
+        >
+          Management & Hierarchy
+        </button>
+      </div>
 
-            <div className="flex justify-end space-x-4">
-              <Button type="button" variant="secondary" onClick={() => router.back()}>
-                Cancel
-              </Button>
-              <Button type="submit" isLoading={isPending}>
-                Save Changes
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+      {activeTab === 'details' ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>Employee Details</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Input
+                  label="First Name"
+                  error={errors.firstName?.message}
+                  {...register('firstName')}
+                />
+                <Input
+                  label="Last Name"
+                  error={errors.lastName?.message}
+                  {...register('lastName')}
+                />
+                <Input
+                  label="Email Address"
+                  type="email"
+                  error={errors.email?.message}
+                  {...register('email')}
+                />
+                <Input
+                  label="Password (leave empty to keep current)"
+                  type="password"
+                  placeholder="Enter new password or leave empty"
+                  error={errors.password?.message}
+                  {...register('password')}
+                />
+                <Input
+                  label="Position"
+                  error={errors.position?.message}
+                  {...register('position')}
+                />
+                <Input
+                  label="Department"
+                  error={errors.department?.message}
+                  {...register('department')}
+                />
+                <Input
+                  label="Base Salary"
+                  type="number"
+                  error={errors.baseSalary?.message}
+                  {...register('baseSalary')}
+                />
+              </div>
+
+              <div className="flex justify-end space-x-4">
+                <Button type="button" variant="secondary" onClick={() => router.back()}>
+                  Cancel
+                </Button>
+                <Button type="submit" isLoading={isPending}>
+                  Save Changes
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      ) : (
+        <HierarchyManager employeeId={id} />
+      )}
     </div>
   );
 }

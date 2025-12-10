@@ -12,6 +12,7 @@ export interface Employee {
   department: string;
   joinDate: string;
   baseSalary: number;
+  managerId: string | null;
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
@@ -147,6 +148,107 @@ export const useRestoreEmployee = () => {
     },
     onError: () => {
       toast.error('Failed to restore employee');
+    },
+  });
+};
+
+// --- Management Hierarchy Hooks ---
+
+export interface AssignManagerPayload {
+  managerId: string | null;
+}
+
+export interface AssignSubordinatesPayload {
+  subordinateIds: number[]; 
+}
+
+export interface OrganizationTreeResponse {
+  manager: Employee | null;
+  employee: Employee;
+  subordinates: Employee[];
+  siblings: Employee[];
+  managementChain: Employee[];
+}
+
+export const useAssignManager = (id: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: AssignManagerPayload) => api.put(`/employees/${id}/manager`, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['employees', id] });
+      queryClient.invalidateQueries({ queryKey: ['employees', id, 'management-chain'] });
+      queryClient.invalidateQueries({ queryKey: ['employees', id, 'org-tree'] });
+      toast.success('Manager assigned successfully');
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onError: (error: any) => {
+      const message = error?.response?.data?.message || 'Failed to assign manager';
+      toast.error(message);
+    },
+  });
+};
+
+export const useAssignSubordinates = (id: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: AssignSubordinatesPayload) => api.put(`/employees/${id}/subordinates`, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['employees', id] });
+      queryClient.invalidateQueries({ queryKey: ['employees', id, 'subordinates'] });
+      queryClient.invalidateQueries({ queryKey: ['employees', id, 'org-tree'] });
+      toast.success('Subordinates assigned successfully');
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onError: (error: any) => {
+      const message = error?.response?.data?.message || 'Failed to assign subordinates';
+      toast.error(message);
+    },
+  });
+};
+
+export const useManagementChain = (id: string) => {
+  return useQuery({
+    queryKey: ['employees', id, 'management-chain'],
+    queryFn: async () => {
+      const { data } = await api.get<Employee[]>(`/employees/${id}/management-chain`);
+      return data;
+    },
+    enabled: !!id,
+  });
+};
+
+export const useSubordinates = (id: string) => {
+  return useQuery({
+    queryKey: ['employees', id, 'subordinates'],
+    queryFn: async () => {
+      const { data } = await api.get<Employee[]>(`/employees/${id}/subordinates`);
+      return data;
+    },
+    enabled: !!id,
+  });
+};
+
+export const useOrganizationTree = (id: string) => {
+  return useQuery({
+    queryKey: ['employees', id, 'org-tree'],
+    queryFn: async () => {
+      const { data } = await api.get<OrganizationTreeResponse>(`/employees/${id}/organization-tree`);
+      return data;
+    },
+    enabled: !!id,
+  });
+};
+
+export const useAllEmployees = () => {
+  return useQuery({
+    queryKey: ['employees', 'all'],
+    queryFn: async () => {
+      const { data } = await api.get<EmployeesResponse>('/employees', { 
+        params: { paginated: 0 } 
+      }).catch(() => ({ data: { data: [] } })); 
+      
+      if (!data.data && Array.isArray(data)) return data as unknown as Employee[];
+      return data.data || [];
     },
   });
 };
