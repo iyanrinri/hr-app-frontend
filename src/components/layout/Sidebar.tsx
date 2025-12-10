@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { Users, LayoutDashboard, LogOut, ChevronLeft, ChevronRight, Calendar, Clock, Bell } from 'lucide-react';
+import { Users, LayoutDashboard, LogOut, ChevronLeft, ChevronRight, Calendar, Clock, Bell, Settings } from 'lucide-react';
 import { useLogout } from '@/hooks/useAuth';
 import { useAuthStore } from '@/store/authStore';
 import { useNotifications } from '@/hooks/useNotifications';
@@ -15,6 +15,7 @@ const navigation = [
   { name: "Today's Attendance", href: '/dashboard/attendance/today', icon: Bell, roles: ['SUPER', 'HR'] },
   { name: 'Employees', href: '/dashboard/employees', icon: Users, roles: ['SUPER', 'HR', 'EMPLOYEE'] },
   { name: 'Attendance Periods', href: '/dashboard/attendance-periods', icon: Calendar, roles: ['SUPER', 'HR'] },
+  { name: 'Settings', href: '/dashboard/settings', icon: Settings, roles: ['SUPER'] },
 ];
 
 export function Sidebar() {

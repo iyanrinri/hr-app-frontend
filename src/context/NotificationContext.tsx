@@ -4,6 +4,7 @@ import React, { createContext, useContext, useEffect, useState, ReactNode } from
 import { io, Socket } from 'socket.io-client';
 import { useAuthStore } from '@/store/authStore';
 import { toast } from 'react-hot-toast';
+import { UserCheck, LogOut, BarChart3 } from 'lucide-react';
 
 interface AttendanceNotification {
   type: 'CLOCK_IN' | 'CLOCK_OUT';
@@ -34,8 +35,6 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   const token = useAuthStore((state) => state.token);
 
   useEffect(() => {
-    console.log('🔄 [NotificationContext] Checking token:', token ? 'Token exists' : 'No token');
-    
     if (!token) return;
 
     // Request notification permission
@@ -44,8 +43,6 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
         console.log('📢 Notification permission:', permission);
       });
     }
-
-    console.log('🔌 [NotificationContext] Attempting to connect to ws://localhost:3000/notifications');
 
     // Connect to WebSocket
     const socketInstance = io('ws://localhost:3000/notifications', {
@@ -58,7 +55,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     });
 
     socketInstance.on('connect_error', (err) => {
-      console.error('❌ [NotificationContext] Connection Error:', err.message);
+      // console.error('❌ [NotificationContext] Connection Error:', err.message);
     });
 
     socketInstance.on('connect', () => {
@@ -83,11 +80,15 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       setNotifications((prev) => [data, ...prev]);
       setUnreadCount((prev) => prev + 1);
 
+      // Determine icon based on type
+      const Icon = data.type === 'CLOCK_IN' ? UserCheck : LogOut;
+      const iconColor = data.type === 'CLOCK_IN' ? 'text-green-600' : 'text-amber-600';
+
       // Show toast notification
       toast.success(data.message || `${data.employeeName} - ${data.type}`, {
-        duration: 5000,
+        duration: 10000,
         position: 'top-right',
-        icon: '🔔'
+        icon: <Icon className={`w-6 h-6 ${iconColor}`} />
       });
 
       // Show browser notification
@@ -123,9 +124,9 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       const message = event?.data?.message || event?.message || 'Attendance Updated';
       
       toast.success(message, {
-        duration: 5000,
+        duration: 10000,
         position: 'top-right',
-        icon: '📊'
+        icon: <BarChart3 className="w-6 h-6 text-brand-navy" />
       });
     });
 
