@@ -54,8 +54,8 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       reconnectionDelay: 1000
     });
 
-    socketInstance.on('connect_error', (err) => {
-      // console.error('❌ [NotificationContext] Connection Error:', err.message);
+    socketInstance.on('connect_error', () => {
+      // console.error('❌ [NotificationContext] Connection Error');
     });
 
     socketInstance.on('connect', () => {
@@ -110,6 +110,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       }
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     socketInstance.on('dashboard-update', (event: any) => {
       console.log('📊 [DASHBOARD-UPDATE] Received:', {
         timestamp: new Date().toISOString(),
@@ -139,6 +140,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       });
     });
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSocket(socketInstance);
 
     return () => {

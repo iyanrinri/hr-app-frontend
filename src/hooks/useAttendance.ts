@@ -25,8 +25,8 @@ export interface Attendance {
   attendancePeriod?: {
     id: string;
     name: string;
-    startDate: any;
-    endDate: any;
+    startDate: string;
+    endDate: string;
   };
   employee?: {
     id: string;
@@ -83,8 +83,9 @@ export const useClockIn = () => {
       queryClient.invalidateQueries({ queryKey: ['attendance', 'history'] });
       toast.success('Clocked in successfully');
     },
-    onError: (error: any) => {
-      const message = error?.response?.data?.message || 'Failed to clock in';
+    onError: (error: unknown) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const message = (error as any)?.response?.data?.message || 'Failed to clock in';
       toast.error(message);
     },
   });
@@ -102,8 +103,9 @@ export const useClockOut = () => {
       queryClient.invalidateQueries({ queryKey: ['attendance', 'history'] });
       toast.success('Clocked out successfully');
     },
-    onError: (error: any) => {
-      const message = error?.response?.data?.message || 'Failed to clock out';
+    onError: (error: unknown) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const message = (error as any)?.response?.data?.message || 'Failed to clock out';
       toast.error(message);
     },
   });
@@ -181,8 +183,8 @@ export interface TodayAttendanceEmployee {
   email: string;
   department: string;
   position: string;
-  checkIn?: any;
-  checkOut?: any;
+  checkIn?: string | null;
+  checkOut?: string | null;
   status?: 'PRESENT' | 'ABSENT' | 'LATE' | 'EXCUSED';
   isLate?: boolean;
   minutesLate?: number;

@@ -43,7 +43,7 @@ export default function TodayAttendanceDashboardPage() {
     }
   }, [dashboardUpdateTrigger, refetch]);
 
-  const formatTime = (dateObj: any) => {
+  const formatTime = (dateObj: string | number | Date | null | undefined) => {
     if (!dateObj) return '-';
     try {
       const date = new Date(dateObj);

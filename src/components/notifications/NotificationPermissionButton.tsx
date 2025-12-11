@@ -2,16 +2,15 @@
 
 import { Button } from '@/components/ui/Button';
 import { Bell, BellOff } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 export function NotificationPermissionButton() {
-  const [permission, setPermission] = useState<NotificationPermission>('default');
-
-  useEffect(() => {
-    if ('Notification' in window) {
-      setPermission(Notification.permission);
+  const [permission, setPermission] = useState<NotificationPermission>(() => {
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      return Notification.permission;
     }
-  }, []);
+    return 'default';
+  });
 
   const requestPermission = async () => {
     if ('Notification' in window) {
