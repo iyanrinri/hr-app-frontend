@@ -12,7 +12,7 @@ export interface Employee {
   department: string;
   joinDate: string;
   baseSalary: number;
-  managerId: string | null;
+  managerId: number | null;
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
@@ -155,7 +155,7 @@ export const useRestoreEmployee = () => {
 // --- Management Hierarchy Hooks ---
 
 export interface AssignManagerPayload {
-  managerId: string | null;
+  managerId: number | null;
 }
 
 export interface AssignSubordinatesPayload {
@@ -191,7 +191,7 @@ export const useAssignManager = (id: string) => {
 export const useAssignSubordinates = (id: string) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: AssignSubordinatesPayload) => api.put(`/employees/${id}/subordinates`, data),
+    mutationFn: (data: AssignSubordinatesPayload) => api.post(`/employees/${id}/subordinates`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['employees', id] });
       queryClient.invalidateQueries({ queryKey: ['employees', id, 'subordinates'] });

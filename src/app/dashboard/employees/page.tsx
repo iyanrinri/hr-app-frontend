@@ -173,7 +173,7 @@ export default function EmployeesPage() {
                        
                        {/* Spacer for Avatar */}
                        <div className="mb-4">
-                          <Link href={`/dashboard/employees/${emp.id}/edit`} className="block hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-cyan rounded-md">
+                          <Link href={`/dashboard/employees/${emp.id}`} className="block hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-cyan rounded-md">
                              <h3 className="font-bold text-gray-900 text-xl leading-tight group-hover:text-brand-navy transition-colors truncate pr-2" title={`${emp.firstName} ${emp.lastName}`}>
                                {emp.firstName} {emp.lastName}
                              </h3>
@@ -193,7 +193,7 @@ export default function EmployeesPage() {
                        </div>
 
                        <div className="flex gap-2">
-                          <Link href={`/dashboard/employees/${emp.id}/edit`} className="flex-1">
+                          <Link href={`/dashboard/employees/${emp.id}`} className="flex-1">
                             <Button variant="secondary" className="w-full h-9 text-xs">
                               <Edit className="w-3.5 h-3.5 mr-1.5" /> Edit
                             </Button>

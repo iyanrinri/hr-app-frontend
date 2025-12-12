@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { LayoutDashboard, Users, Clock, Settings, LogOut, Bell, Calendar, CalendarClock, ChevronLeft, ChevronRight, FileText, CheckSquare } from 'lucide-react';
+import { LayoutDashboard, Users, Clock, Settings, LogOut, Bell, Calendar, CalendarClock, ChevronLeft, ChevronRight, FileText, CheckSquare, Timer, Hourglass, BarChart3 } from 'lucide-react';
 import { useLogout } from '@/hooks/useAuth';
 import { useAuthStore } from '@/store/authStore';
 import { useNotifications } from '@/hooks/useNotifications';
@@ -19,6 +19,10 @@ const navigation = [
   { name: 'Leave Config', href: '/dashboard/leaves/periods', icon: CalendarClock, roles: ['SUPER', 'HR'] },
   { name: 'My Leaves', href: '/dashboard/leaves/my', icon: FileText }, // All roles
   { name: 'Approvals', href: '/dashboard/leaves/approvals', icon: CheckSquare, roles: ['SUPER', 'HR', 'MANAGER'] },
+  // Overtime
+  { name: 'My Overtime', href: '/dashboard/overtime/my', icon: Timer }, // All roles
+  { name: 'Pending Overtime', href: '/dashboard/overtime/pending', icon: Hourglass, roles: ['SUPER', 'HR', 'MANAGER'] },
+  { name: 'Overtime Admin', href: '/dashboard/overtime/admin', icon: BarChart3, roles: ['SUPER', 'HR'] },
 ];
 
 export function Sidebar() {
@@ -29,9 +33,12 @@ export function Sidebar() {
   const { unreadCount } = useNotifications();
 
   // Filter navigation items based on user role
-  const filteredNavigation = navigation.filter((item) => 
-    !item.roles || (user?.role && item.roles.includes(user.role))
-  );
+  const filteredNavigation = navigation.filter((item) => {
+    if (item.name === 'Approvals' && user?.hasSubordinates) {
+      return true;
+    }
+    return !item.roles || (user?.role && item.roles.includes(user.role));
+  });
 
   return (
     <div className={cn(

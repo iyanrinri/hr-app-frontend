@@ -17,7 +17,7 @@ export function HierarchyManager({ employeeId }: HierarchyManagerProps) {
   
   const [showOrgChart, setShowOrgChart] = useState(false);
   const [isEditManager, setIsEditManager] = useState(false);
-  const [selectedManagerId, setSelectedManagerId] = useState<string>('');
+  const [selectedManagerId, setSelectedManagerId] = useState<number | null>(null);
 
   // Derived state
   const otherEmployees = allEmployees?.filter(e => e.id !== employeeId) || [];
@@ -70,8 +70,8 @@ export function HierarchyManager({ employeeId }: HierarchyManagerProps) {
                <div className="space-y-3">
                  <select 
                    className="w-full p-2 border rounded-md text-sm"
-                   value={selectedManagerId}
-                   onChange={(e) => setSelectedManagerId(e.target.value)}
+                   value={selectedManagerId ?? ''}
+                   onChange={(e) => setSelectedManagerId(e.target.value ? Number(e.target.value) : null)}
                  >
                    <option value="">-- No Manager --</option>
                    {otherEmployees.map(e => (
@@ -104,7 +104,7 @@ export function HierarchyManager({ employeeId }: HierarchyManagerProps) {
                    )}
                  </div>
                  <Button variant="secondary" onClick={() => {
-                   setSelectedManagerId(String(employee.managerId || ''));
+                   setSelectedManagerId(employee.managerId);
                    setIsEditManager(true);
                  }}>
                    Change

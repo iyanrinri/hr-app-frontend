@@ -96,6 +96,10 @@ export interface LeaveRequest {
   hrComments?: string;
   emergencyContact?: string;
   handoverNotes?: string;
+  // New fields for approval tracking
+  requiresManagerApproval?: boolean;
+  managerApprovedAt?: string;
+  hrApprovalStatus?: 'PENDING' | 'APPROVED' | 'REJECTED';
 }
 
 export interface LeaveBalance {

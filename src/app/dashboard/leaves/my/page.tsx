@@ -20,41 +20,70 @@ export default function MyLeavesPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const requests = Array.isArray(requestsData) ? requestsData : (requestsData as any)?.data || [];
 
-  const getStatusBadge = (status: LeaveRequestStatus) => {
-    switch (status) {
-      case LeaveRequestStatus.APPROVED: 
-      case LeaveRequestStatus.HR_APPROVED:
-      case LeaveRequestStatus.MANAGER_APPROVED:
-        return (
+  const getStatusBadge = (request: LeaveRequest) => {
+    const { status, managerApprovedAt, hrApprovalStatus } = request;
+
+    // APPROVED by HR (final approval)
+    if (status === LeaveRequestStatus.APPROVED || hrApprovalStatus === 'APPROVED') {
+      return (
+        <div className="flex flex-col gap-1">
           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
             <CheckCircle2 className="w-3 h-3 mr-1" />
             Approved
           </span>
-        );
-      case LeaveRequestStatus.PENDING: 
-        return (
+          <span className="text-xs text-gray-500">by HR</span>
+        </div>
+      );
+    }
+
+    // MANAGER_APPROVED - waiting for HR
+    if (status === LeaveRequestStatus.MANAGER_APPROVED || (managerApprovedAt && hrApprovalStatus === 'PENDING')) {
+      return (
+        <div className="flex flex-col gap-1">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
+            <CheckCircle2 className="w-3 h-3 mr-1" />
+            Manager Approved
+          </span>
+          <span className="text-xs text-gray-500">waiting for HR</span>
+        </div>
+      );
+    }
+
+    // PENDING - waiting for manager or HR
+    if (status === LeaveRequestStatus.PENDING) {
+      return (
+        <div className="flex flex-col gap-1">
           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">
             <Clock className="w-3 h-3 mr-1" />
             Pending
           </span>
-        );
-      case LeaveRequestStatus.REJECTED: 
-        return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-200">
-            <XCircle className="w-3 h-3 mr-1" />
-            Rejected
-          </span>
-        );
-      case LeaveRequestStatus.CANCELLED: 
-        return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200">
-            <AlertCircle className="w-3 h-3 mr-1" />
-            Cancelled
-          </span>
-        );
-      default: 
-        return <span className="text-gray-500">{status}</span>;
+          <span className="text-xs text-gray-500">waiting for Manager/HR</span>
+        </div>
+      );
     }
+
+    // REJECTED
+    if (status === LeaveRequestStatus.REJECTED || hrApprovalStatus === 'REJECTED') {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-200">
+          <XCircle className="w-3 h-3 mr-1" />
+          Rejected
+        </span>
+      );
+    }
+
+    // CANCELLED
+    if (status === LeaveRequestStatus.CANCELLED) {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200">
+          <AlertCircle className="w-3 h-3 mr-1" />
+          Cancelled
+        </span>
+      );
+    }
+
+    // Default fallback
+    return <span className="text-gray-500">{status}</span>;
   };
 
   const handleCancel = (id: string) => {
@@ -217,7 +246,7 @@ export default function MyLeavesPage() {
                       {req.submittedAt ? formatDistanceToNow(new Date(req.submittedAt), { addSuffix: true }) : '-'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {getStatusBadge(req.status)}
+                      {getStatusBadge(req)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       {(req.status === LeaveRequestStatus.PENDING || req.status === LeaveRequestStatus.MANAGER_APPROVED) && (

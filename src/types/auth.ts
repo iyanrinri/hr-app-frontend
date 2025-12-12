@@ -3,6 +3,7 @@ export interface User {
   email: string;
   name: string;
   role: string;
+  hasSubordinates?: boolean;
 }
 
 export interface LoginResponse {
