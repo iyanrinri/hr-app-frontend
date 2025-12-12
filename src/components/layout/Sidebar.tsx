@@ -22,6 +22,7 @@ const navigation = [
   // Overtime
   { name: 'My Overtime', href: '/dashboard/overtime/my', icon: Timer }, // All roles
   { name: 'Pending Overtime', href: '/dashboard/overtime/pending', icon: Hourglass, roles: ['SUPER', 'HR', 'MANAGER'] },
+  { name: 'Approval History', href: '/dashboard/overtime/approvals', icon: CheckSquare, roles: ['SUPER', 'HR', 'MANAGER'] },
   { name: 'Overtime Admin', href: '/dashboard/overtime/admin', icon: BarChart3, roles: ['SUPER', 'HR'] },
 ];
 
@@ -91,7 +92,18 @@ export function Sidebar() {
           );
         })}
       </nav>
-      <div className="p-4 border-t border-gray-200">
+      <div className="p-4 border-t border-gray-200 space-y-2">
+        {!isCollapsed && user && (
+           <Link href="/dashboard/profile" className="flex items-center p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors mb-2">
+             <div className="h-8 w-8 rounded-full bg-brand-navy flex items-center justify-center text-white shrink-0">
+               <span className="text-xs font-bold">{(user.name || 'U').charAt(0).toUpperCase()}</span>
+             </div>
+             <div className="ml-3 overflow-hidden">
+               <p className="text-sm font-medium text-gray-900 truncate">{user.name}</p>
+               <p className="text-xs text-gray-500 truncate">{user.role}</p>
+             </div>
+           </Link>
+        )}
         <button
           onClick={logout}
           className={cn(

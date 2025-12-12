@@ -6,6 +6,32 @@ export enum OvertimeStatus {
   REJECTED = 'REJECTED'
 }
 
+export enum ApproverType {
+  MANAGER = 'MANAGER',
+  HR = 'HR'
+}
+
+export enum ApprovalStatus {
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED'
+}
+
+export interface OvertimeApprovalProcessPayload {
+  requestId: number | string;
+  status: ApprovalStatus;
+  approverType: ApproverType;
+  comments?: string;
+  rejectionReason?: string;
+}
+
+export interface OvertimeApprovalStats {
+  approved: number;
+  rejected: number;
+  pending: number;
+  total: number;
+}
+
 export interface OvertimeRequest {
   id: string;
   employeeId: string;
