@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { LayoutDashboard, Users, Clock, Settings, LogOut, Bell, Calendar, CalendarClock, ChevronLeft, ChevronRight, FileText, CheckSquare, Timer, Hourglass, BarChart3 } from 'lucide-react';
+import { LayoutDashboard, Users, Clock, Settings, LogOut, Bell, Calendar, CalendarClock, ChevronLeft, ChevronRight, FileText, CheckSquare, Timer, Hourglass, BarChart3, Banknote, Wallet } from 'lucide-react';
 import { useLogout } from '@/hooks/useAuth';
 import { useAuthStore } from '@/store/authStore';
 import { useNotifications } from '@/hooks/useNotifications';
@@ -24,6 +24,11 @@ const navigation = [
   { name: 'Pending Overtime', href: '/dashboard/overtime/pending', icon: Hourglass, roles: ['SUPER', 'HR', 'MANAGER'] },
   { name: 'Approval History', href: '/dashboard/overtime/approvals', icon: CheckSquare, roles: ['SUPER', 'HR', 'MANAGER'] },
   { name: 'Overtime Admin', href: '/dashboard/overtime/admin', icon: BarChart3, roles: ['SUPER', 'HR'] },
+  // Payroll
+  { name: 'Payroll', href: '/dashboard/payroll', icon: Banknote, roles: ['SUPER', 'HR'] },
+  { name: 'Payslips', href: '/dashboard/payslips', icon: FileText, roles: ['SUPER', 'HR'] },
+  { name: 'My Salary', href: '/dashboard/payroll/my', icon: Wallet }, // All roles
+  { name: 'My Payslips', href: '/dashboard/payslips/my', icon: FileText }, // All roles
 ];
 
 export function Sidebar() {
