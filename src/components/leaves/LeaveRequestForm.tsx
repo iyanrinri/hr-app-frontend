@@ -3,6 +3,7 @@
 import { useActiveLeavePeriod, useLeaveTypes, useCreateLeaveRequest } from '@/hooks/useLeave';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { Textarea } from '@/components/ui/Textarea';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -94,26 +95,22 @@ export function LeaveRequestForm({ onSuccess, onCancel }: Props) {
 
           {estDays > 0 && <div className="text-sm text-brand-navy font-medium">Estimated Duration: {estDays} Days</div>}
 
-          <div className="space-y-1">
-             <label className="text-sm font-medium text-gray-700">Reason</label>
-             <textarea 
-               className="w-full min-h-[80px] border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-navy focus:border-transparent transition-all"
-               placeholder="Why are you taking leave?"
-               {...register('reason')}
-             />
-             {errors.reason && <p className="text-xs text-red-500">{errors.reason.message}</p>}
-          </div>
+          <Textarea 
+             label="Reason"
+             placeholder="Why are you taking leave?"
+             error={errors.reason?.message}
+             {...register('reason')}
+          />
 
           <Input label="Emergency Contact" placeholder="+62..." error={errors.emergencyContact?.message} {...register('emergencyContact')} />
           
-          <div className="space-y-1">
-             <label className="text-sm font-medium text-gray-700">Handover Notes (Optional)</label>
-             <textarea 
-               className="w-full min-h-[60px] border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-navy focus:border-transparent transition-all"
-               placeholder="Who will cover your tasks?"
-               {...register('handoverNotes')}
-             />
-          </div>
+          <Textarea 
+             label="Handover Notes (Optional)"
+             placeholder="Who will cover your tasks?"
+             error={errors.handoverNotes?.message}
+             className="min-h-[60px]"
+             {...register('handoverNotes')}
+          />
 
           <div className="flex justify-end gap-3 pt-4">
             <Button type="button" variant="ghost" onClick={onCancel}>Cancel</Button>

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useParams } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { LayoutDashboard, Users, Clock, Settings, LogOut, Bell, Calendar, CalendarClock, ChevronLeft, ChevronRight, FileText, CheckSquare, Timer, Hourglass, BarChart3, Banknote, Wallet } from 'lucide-react';
 import { useLogout } from '@/hooks/useAuth';
@@ -10,23 +10,23 @@ import { useNotifications } from '@/hooks/useNotifications';
 import { useState } from 'react';
 
 const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, roles: ['SUPER', 'HR', 'EMPLOYEE'] },
-  { name: 'My Attendance', href: '/dashboard/attendance', icon: Clock, roles: ['SUPER', 'HR', 'EMPLOYEE'] },
-  { name: "Today's Attendance", href: '/dashboard/attendance/today', icon: Bell, roles: ['SUPER', 'HR'] },
-  { name: 'Employees', href: '/dashboard/employees', icon: Users, roles: ['SUPER', 'HR'] },
-  { name: 'Attendance Periods', href: '/dashboard/attendance-periods', icon: Calendar, roles: ['SUPER', 'HR'] },
-  { name: 'Settings', href: '/dashboard/settings', icon: Settings, roles: ['SUPER'] },
-  { name: 'Leave Config', href: '/dashboard/leaves/periods', icon: CalendarClock, roles: ['SUPER', 'HR'] },
+  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, roles: ['SUPER', 'ADMIN', 'HR', 'EMPLOYEE'] },
+  { name: 'My Attendance', href: '/dashboard/attendance', icon: Clock, roles: ['SUPER', 'ADMIN', 'HR', 'EMPLOYEE'] },
+  { name: "Today's Attendance", href: '/dashboard/attendance/today', icon: Bell, roles: ['SUPER', 'ADMIN', 'HR'] },
+  { name: 'Employees', href: '/dashboard/employees', icon: Users, roles: ['SUPER', 'ADMIN', 'HR'] },
+  { name: 'Attendance Periods', href: '/dashboard/attendance-periods', icon: Calendar, roles: ['SUPER', 'ADMIN', 'HR'] },
+  { name: 'Settings', href: '/dashboard/settings', icon: Settings, roles: ['SUPER', 'ADMIN'] },
+  { name: 'Leave Config', href: '/dashboard/leaves/periods', icon: CalendarClock, roles: ['SUPER', 'ADMIN', 'HR'] },
   { name: 'My Leaves', href: '/dashboard/leaves/my', icon: FileText }, // All roles
-  { name: 'Approvals', href: '/dashboard/leaves/approvals', icon: CheckSquare, roles: ['SUPER', 'HR', 'MANAGER'] },
+  { name: 'Approvals', href: '/dashboard/leaves/approvals', icon: CheckSquare, roles: ['SUPER', 'ADMIN', 'HR', 'MANAGER'] },
   // Overtime
   { name: 'My Overtime', href: '/dashboard/overtime/my', icon: Timer }, // All roles
-  { name: 'Pending Overtime', href: '/dashboard/overtime/pending', icon: Hourglass, roles: ['SUPER', 'HR', 'MANAGER'] },
-  { name: 'Approval History', href: '/dashboard/overtime/approvals', icon: CheckSquare, roles: ['SUPER', 'HR', 'MANAGER'] },
-  { name: 'Overtime Admin', href: '/dashboard/overtime/admin', icon: BarChart3, roles: ['SUPER', 'HR'] },
+  { name: 'Pending Overtime', href: '/dashboard/overtime/pending', icon: Hourglass, roles: ['SUPER', 'ADMIN', 'HR', 'MANAGER'] },
+  { name: 'Approval History', href: '/dashboard/overtime/approvals', icon: CheckSquare, roles: ['SUPER', 'ADMIN', 'HR', 'MANAGER'] },
+  { name: 'Overtime Admin', href: '/dashboard/overtime/admin', icon: BarChart3, roles: ['SUPER', 'ADMIN', 'HR'] },
   // Payroll
-  { name: 'Payroll', href: '/dashboard/payroll', icon: Banknote, roles: ['SUPER', 'HR'] },
-  { name: 'Payslips', href: '/dashboard/payslips', icon: FileText, roles: ['SUPER', 'HR'] },
+  { name: 'Payroll', href: '/dashboard/payroll', icon: Banknote, roles: ['SUPER', 'ADMIN', 'HR'] },
+  { name: 'Payslips', href: '/dashboard/payslips', icon: FileText, roles: ['SUPER', 'ADMIN', 'HR'] },
   { name: 'My Salary', href: '/dashboard/payroll/my', icon: Wallet }, // All roles
   { name: 'My Payslips', href: '/dashboard/payslips/my', icon: FileText }, // All roles
 ];
@@ -37,14 +37,19 @@ export function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const user = useAuthStore((state) => state.user);
   const { unreadCount } = useNotifications();
+  const params = useParams();
+  const tenantSlug = params?.tenant_slug as string;
 
-  // Filter navigation items based on user role
+  // Filter navigation items based on user role and update hrefs
   const filteredNavigation = navigation.filter((item) => {
     if (item.name === 'Approvals' && user?.hasSubordinates) {
       return true;
     }
     return !item.roles || (user?.role && item.roles.includes(user.role));
-  });
+  }).map(item => ({
+    ...item,
+    href: tenantSlug ? `/${tenantSlug}${item.href}` : item.href
+  }));
 
   return (
     <div className={cn(
@@ -99,7 +104,7 @@ export function Sidebar() {
       </nav>
       <div className="p-4 border-t border-gray-200 space-y-2">
         {!isCollapsed && user && (
-           <Link href="/dashboard/profile" className="flex items-center p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors mb-2">
+           <Link href={tenantSlug ? `/${tenantSlug}/dashboard/profile` : '/dashboard/profile'} className="flex items-center p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors mb-2">
              <div className="h-8 w-8 rounded-full bg-brand-navy flex items-center justify-center text-white shrink-0">
                <span className="text-xs font-bold">{(user.name || 'U').charAt(0).toUpperCase()}</span>
              </div>

@@ -7,8 +7,10 @@ import { Card } from '@/components/ui/Card';
 import Link from 'next/link';
 import { Plus, Search, LayoutGrid, List as ListIcon, Edit, Trash2, User, Mail, Briefcase } from 'lucide-react';
 import { useState } from 'react';
+import { useParams } from 'next/navigation';
 
 export default function EmployeesPage() {
+  const params = useParams();
   // View Mode State
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
@@ -57,7 +59,7 @@ export default function EmployeesPage() {
           <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Employee Directory</h2>
           <p className="text-gray-500 mt-1">Manage your organization&apos;s workforce and profiles.</p>
         </div>
-        <Link href="/dashboard/employees/create">
+        <Link href={`/${params?.tenant_slug}/dashboard/employees/create`}>
           <Button className="shadow-lg shadow-brand-navy/20 h-10 px-6">
             <Plus className="w-4 h-4 mr-2" />
             Add Employee
@@ -173,7 +175,7 @@ export default function EmployeesPage() {
                        
                        {/* Spacer for Avatar */}
                        <div className="mb-4">
-                          <Link href={`/dashboard/employees/${emp.id}`} className="block hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-cyan rounded-md">
+                          <Link href={`/${params?.tenant_slug}/dashboard/employees/${emp.id}`} className="block hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-cyan rounded-md">
                              <h3 className="font-bold text-gray-900 text-xl leading-tight group-hover:text-brand-navy transition-colors truncate pr-2" title={`${emp.firstName} ${emp.lastName}`}>
                                {emp.firstName} {emp.lastName}
                              </h3>
@@ -184,7 +186,7 @@ export default function EmployeesPage() {
                        <div className="space-y-3 mb-6 pt-4 border-t border-gray-50">
                           <div className="flex items-center text-sm text-gray-500">
                              <Mail className="w-4 h-4 mr-3 text-gray-400 shrink-0" />
-                             <span className="truncate" title={emp.email || emp.user?.email}>{emp.email || emp.user?.email}</span>
+                             <span className="truncate" title={emp.user?.email}>{emp.user?.email}</span>
                           </div>
                           <div className="flex items-center text-sm text-gray-500">
                              <Briefcase className="w-4 h-4 mr-3 text-gray-400 shrink-0" />
@@ -193,7 +195,7 @@ export default function EmployeesPage() {
                        </div>
 
                        <div className="flex gap-2">
-                          <Link href={`/dashboard/employees/${emp.id}`} className="flex-1">
+                        <Link href={`/${params?.tenant_slug}/dashboard/employees/${emp.id}`} className="flex-1">
                             <Button variant="secondary" className="w-full h-9 text-xs">
                               <Edit className="w-3.5 h-3.5 mr-1.5" /> Edit
                             </Button>

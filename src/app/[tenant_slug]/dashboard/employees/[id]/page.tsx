@@ -56,7 +56,7 @@ export default function EditEmployeePage() {
     reset,
     formState: { errors },
   } = useForm<EmployeeFormValues>({
-    resolver: zodResolver(employeeSchema),
+    resolver: zodResolver(employeeSchema) as any,
   });
 
   useEffect(() => {

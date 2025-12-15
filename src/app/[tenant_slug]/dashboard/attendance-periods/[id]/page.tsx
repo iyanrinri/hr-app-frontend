@@ -7,6 +7,7 @@ import { useAttendancePeriod, useUpdateAttendancePeriod } from '@/hooks/useAtten
 import { useHolidays, useCreateHoliday, useDeleteHoliday } from '@/hooks/useHolidays';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { Textarea } from '@/components/ui/Textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { useRouter, useParams } from 'next/navigation';
 import { ArrowLeft, Plus, Trash2, Calendar as CalendarIcon } from 'lucide-react';
@@ -67,7 +68,7 @@ export default function EditAttendancePeriodPage() {
     reset,
     formState: { errors },
   } = useForm<PeriodFormValues>({
-    resolver: zodResolver(periodSchema),
+    resolver: zodResolver(periodSchema) as any,
   });
 
   useEffect(() => {
@@ -91,7 +92,10 @@ export default function EditAttendancePeriodPage() {
   }, [period, reset]);
 
   const onSubmit = (data: PeriodFormValues) => {
-    updatePeriod(data);
+    updatePeriod({
+      ...data,
+      description: data.description ?? null,
+    });
   };
 
   const handleAddHoliday = () => {
@@ -228,12 +232,11 @@ export default function EditAttendancePeriodPage() {
                 </label>
               </div>
               <div className="md:col-span-2">
-                <label className="block text-sm font-bold text-gray-900 mb-1">
-                  Description
-                </label>
-                <textarea
-                  className="block w-full px-3 py-2 bg-white text-black border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-brand-cyan focus:border-brand-cyan"
+                <Textarea
+                  label="Description"
+                  placeholder="Optional description for this period"
                   rows={3}
+                  error={errors.description?.message}
                   {...register('description')}
                 />
               </div>

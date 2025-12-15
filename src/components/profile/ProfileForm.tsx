@@ -48,6 +48,12 @@ const INDONESIAN_PROVINCES = [
   'Sumatera Barat', 'Sumatera Selatan', 'Sumatera Utara', 'Other'
 ];
 
+const BLOOD_TYPES = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+
+const EMERGENCY_RELATIONS = [
+  'Parent', 'Husband', 'Wife', 'Spouse', 'Sibling', 'Child', 'Relative', 'Friend', 'Other'
+];
+
 export const ProfileForm: React.FC<ProfileFormProps> = ({ 
   initialData, 
   onSubmit, 
@@ -213,7 +219,17 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
         </div>
         <div>
            <label className="block text-sm font-medium text-gray-700 mb-1">Blood Type</label>
-           <Input name="bloodType" value={formData.bloodType || ''} onChange={handleChange} className="w-24" placeholder="O+" />
+           <select 
+             name="bloodType" 
+             value={formData.bloodType || ''} 
+             onChange={handleChange}
+             className="block w-full px-3 py-2 bg-white text-black border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-brand-cyan focus:border-brand-cyan text-base"
+           >
+             <option value="">Select</option>
+             {BLOOD_TYPES.map((t) => (
+               <option key={t} value={t}>{t}</option>
+             ))}
+           </select>
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">ID Number (NIK)</label>
@@ -281,7 +297,17 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
              </div>
              <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Relation</label>
-                <Input name="emergencyContactRelation" value={formData.emergencyContactRelation || ''} onChange={handleChange} placeholder="Spouse, Parent..." />
+                <select 
+                  name="emergencyContactRelation" 
+                  value={formData.emergencyContactRelation || ''} 
+                  onChange={handleChange}
+                  className="block w-full px-3 py-2 bg-white text-black border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-brand-cyan focus:border-brand-cyan text-base"
+                >
+                  <option value="">Select Relation</option>
+                  {EMERGENCY_RELATIONS.map((r) => (
+                    <option key={r} value={r}>{r}</option>
+                  ))}
+                </select>
              </div>
           </div>
         </div>

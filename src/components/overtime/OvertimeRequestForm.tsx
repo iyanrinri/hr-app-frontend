@@ -5,6 +5,7 @@ import { useAllEmployees } from '@/hooks/useEmployees';
 import { useAuthStore } from '@/store/authStore';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { Textarea } from '@/components/ui/Textarea';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -34,7 +35,7 @@ export function OvertimeRequestForm({ initialData, onSuccess, onCancel }: Props)
   const { data: employees } = useAllEmployees();
   const user = useAuthStore((state) => state.user);
   
-  const isAdminOrHr = user?.role === 'ADMIN' || user?.role === 'HR';
+  const isAdminOrHr = user?.role === 'ADMIN' || user?.role === 'SUPER' || user?.role === 'HR';
   const isEditing = !!initialData;
   const isPending = isCreating || isUpdating;
 
@@ -178,15 +179,12 @@ export function OvertimeRequestForm({ initialData, onSuccess, onCancel }: Props)
         </div>
       )}
 
-      <div className="space-y-1">
-         <label className="text-sm font-medium text-gray-700">Reason</label>
-         <textarea 
-           className="w-full min-h-[80px] border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-navy focus:border-transparent transition-all"
-           placeholder="Justification for overtime..."
-           {...register('reason')}
-         />
-         {errors.reason && <p className="text-xs text-red-500">{errors.reason.message}</p>}
-      </div>
+      <Textarea 
+         label="Reason"
+         placeholder="Justification for overtime..."
+         error={errors.reason?.message}
+         {...register('reason')}
+      />
 
       <div className="flex justify-end gap-3 pt-4">
         <Button type="button" variant="ghost" onClick={onCancel}>Cancel</Button>

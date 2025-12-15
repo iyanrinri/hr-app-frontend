@@ -12,8 +12,8 @@ export function EmployeeSelector({ selectedEmployeeId, onEmployeeChange }: Emplo
   const user = useAuthStore((state) => state.user);
   const { data: response } = useEmployees(1, 100); // Get all employees for selector
 
-  // Only show selector for HR/SUPER roles
-  if (!user || (user.role !== 'HR' && user.role !== 'SUPER')) {
+  // Only show selector for HR/SUPER/ADMIN roles
+  if (!user || (user.role !== 'HR' && user.role !== 'SUPER' && user.role !== 'ADMIN')) {
     return null;
   }
 

@@ -94,8 +94,8 @@ export default function AttendanceHistoryPage() {
       <Card>
         <CardContent className="pt-6">
           <div className="space-y-4">
-            {/* Employee Selector for HR/SUPER */}
-            {(user?.role === 'HR' || user?.role === 'SUPER') && (
+            {/* Employee Selector for HR/SUPER/ADMIN */}
+            {(user?.role === 'HR' || user?.role === 'SUPER' || user?.role === 'ADMIN') && (
               <EmployeeSelector
                 selectedEmployeeId={selectedEmployeeId}
                 onEmployeeChange={setSelectedEmployeeId}
@@ -159,7 +159,7 @@ export default function AttendanceHistoryPage() {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                  {(user?.role === 'HR' || user?.role === 'SUPER') && (
+                  {(user?.role === 'HR' || user?.role === 'SUPER' || user?.role === 'ADMIN') && (
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee</th>
                   )}
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Clock In</th>

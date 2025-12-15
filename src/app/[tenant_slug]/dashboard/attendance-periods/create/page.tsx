@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { useCreateAttendancePeriod } from '@/hooks/useAttendancePeriods';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { Textarea } from '@/components/ui/Textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
@@ -40,7 +41,7 @@ export default function CreateAttendancePeriodPage() {
     handleSubmit,
     formState: { errors },
   } = useForm<PeriodFormValues>({
-    resolver: zodResolver(periodSchema),
+    resolver: zodResolver(periodSchema) as any,
     defaultValues: {
       workingDaysPerWeek: 5,
       workingHoursPerDay: 8,
@@ -55,7 +56,10 @@ export default function CreateAttendancePeriodPage() {
   });
 
   const onSubmit = (data: PeriodFormValues) => {
-    createPeriod(data);
+    createPeriod({
+      ...data,
+      description: data.description ?? null,
+    });
   };
 
   return (
@@ -158,18 +162,13 @@ export default function CreateAttendancePeriodPage() {
                 </label>
               </div>
               <div className="md:col-span-2">
-                <label className="block text-sm font-bold text-gray-900 mb-1">
-                  Description
-                </label>
-                <textarea
-                  className="block w-full px-3 py-2 bg-white text-black border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-brand-cyan focus:border-brand-cyan"
-                  rows={3}
+                <Textarea
+                  label="Description"
                   placeholder="Optional description for this period"
+                  rows={3}
+                  error={errors.description?.message}
                   {...register('description')}
                 />
-                {errors.description && (
-                  <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
-                )}
               </div>
               <div className="md:col-span-2">
                 <label className="flex items-center space-x-2">

@@ -39,7 +39,7 @@ export default function LeavePeriodDetailPage() {
 
   // Form for Period
   const { register, handleSubmit, reset, formState: { errors } } = useForm<PeriodFormValues>({
-    resolver: zodResolver(periodSchema)
+    resolver: zodResolver(periodSchema) as any
   });
 
   // Modal State
@@ -223,7 +223,7 @@ interface TypeFormValues {
 function LeaveTypeModal({ isOpen, onClose, leavePeriodId }: { isOpen: boolean; onClose: () => void; leavePeriodId: number }) {
   const { mutate: createType, isPending } = useCreateLeaveType();
   const { register, handleSubmit, formState: { errors } } = useForm<TypeFormValues>({
-    resolver: zodResolver(typeSchema),
+    resolver: zodResolver(typeSchema) as any,
     defaultValues: {
       defaultQuota: 12,
       maxConsecutiveDays: 5,

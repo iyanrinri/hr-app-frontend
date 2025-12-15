@@ -32,7 +32,7 @@ export default function CreateEmployeePage() {
     handleSubmit,
     formState: { errors },
   } = useForm<EmployeeFormValues>({
-    resolver: zodResolver(employeeSchema),
+    resolver: zodResolver(employeeSchema) as any,
   });
 
   const onSubmit = (data: EmployeeFormValues) => {

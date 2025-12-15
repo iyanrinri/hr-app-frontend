@@ -128,8 +128,8 @@ export default function AttendancePage() {
         </div>
       </div>
 
-      {/* Employee Selector for HR/SUPER */}
-      {(user?.role === 'HR' || user?.role === 'SUPER') && (
+      {/* Employee Selector for HR/SUPER/ADMIN */}
+      {(user?.role === 'HR' || user?.role === 'SUPER' || user?.role === 'ADMIN') && (
         <Card className="border-none shadow-sm bg-gray-50">
           <CardContent className="pt-6">
             <EmployeeSelector
@@ -200,7 +200,7 @@ export default function AttendancePage() {
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                     placeholder="Add notes for your attendance (optional)..."
-                    className="w-full bg-gray-50 border-0 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-brand-navy/20 resize-none transition-all"
+                    className="w-full bg-gray-50 border-0 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-brand-navy/20 resize-none transition-all placeholder:text-gray-400"
                     rows={2}
                   />
                </div>

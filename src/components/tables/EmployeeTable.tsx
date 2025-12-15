@@ -4,6 +4,7 @@ import { Employee } from '@/hooks/useEmployees';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 import { Edit, Trash2, RotateCcw, Eye, X } from 'lucide-react';
+import { useParams } from 'next/navigation';
 import { useState } from 'react';
 
 interface EmployeeTableProps {
@@ -13,6 +14,7 @@ interface EmployeeTableProps {
 }
 
 export function EmployeeTable({ employees, onDelete, onRestore }: EmployeeTableProps) {
+  const params = useParams();
   const [confirmAction, setConfirmAction] = useState<{ type: 'delete' | 'restore'; id: string } | null>(null);
   const [viewEmployee, setViewEmployee] = useState<Employee | null>(null);
 
@@ -73,7 +75,7 @@ export function EmployeeTable({ employees, onDelete, onRestore }: EmployeeTableP
                       >
                         <Eye className="w-4 h-4" />
                       </Button>
-                      <Link href={`/dashboard/employees/${employee.id}`}>
+                      <Link href={`/${params?.tenant_slug}/dashboard/employees/${employee.id}`}>
                         <Button variant="secondary" className="p-2" title="Edit Employee">
                           <Edit className="w-4 h-4" />
                         </Button>

@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import dynamic from 'next/dynamic';
 
-// @ts-expect-error - dynamic import type resolution issue
+
 const AttendanceMap = dynamic(() => import('./AttendanceMap'), {
   ssr: false,
   loading: () => <div className="h-[400px] w-full bg-gray-100 animate-pulse rounded-lg flex items-center justify-center">Loading Map...</div>
@@ -82,7 +82,6 @@ export default function SettingsTabContent({ category }: SettingsTabContentProps
           </div>
 
           <div className="rounded-lg overflow-hidden border border-gray-200">
-            {/* @ts-expect-error - props type mismatch with dynamic component */}
             <AttendanceMap 
                key={`${latSetting?.value}-${lngSetting?.value}`}
                latitude={parseFloat(String(latSetting?.value || '0'))}
