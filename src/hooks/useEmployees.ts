@@ -109,7 +109,7 @@ export const useUpdateEmployee = (id: string) => {
   const router = useRouter();
 
   return useMutation({
-    mutationFn: (data: Partial<Employee>) => api.patch(`/employees/${id}`, data),
+    mutationFn: (data: Partial<Employee>) => api.put(`/employees/${id}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['employees'] });
       queryClient.invalidateQueries({ queryKey: ['employees', id] });
