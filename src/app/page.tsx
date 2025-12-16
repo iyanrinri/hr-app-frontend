@@ -16,7 +16,7 @@ export default function Home() {
             <span className="text-xl font-bold text-gray-900">HR Portal</span>
           </div>
           <div className="flex items-center space-x-4">
-            <Link href="/auth/login">
+            <Link href="/find-workspace">
               <Button>Sign In</Button>
             </Link>
           </div>
@@ -33,7 +33,7 @@ export default function Home() {
             A comprehensive solution for modern HR management. Streamline employee data, manage roles, and secure your organization&apos;s internal structure.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href="/auth/login">
+            <Link href="/find-workspace">
               <Button className="h-12 px-8 text-lg w-full sm:w-auto">
                 Get Started <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
