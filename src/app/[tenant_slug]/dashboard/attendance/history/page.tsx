@@ -11,6 +11,7 @@ import { useAuthStore } from '@/store/authStore';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { Attendance } from '@/hooks/useAttendance';
+import { useParams } from 'next/navigation';
 
 // Dynamic import for map to avoid SSR issues
 const AttendanceMap = dynamic(() => import('@/components/attendance/AttendanceMap'), {
@@ -19,6 +20,8 @@ const AttendanceMap = dynamic(() => import('@/components/attendance/AttendanceMa
 });
 
 export default function AttendanceHistoryPage() {
+  const params = useParams();
+  const tenantSlug = params?.tenant_slug as string;
   const user = useAuthStore((state) => state.user);
   
   // Filter inputs
@@ -85,7 +88,7 @@ export default function AttendanceHistoryPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold text-gray-900">Attendance History</h2>
-        <Link href="/dashboard/attendance">
+        <Link href={tenantSlug ? `/${tenantSlug}/dashboard/attendance` : '/dashboard/attendance'}>
           <Button variant="secondary">Back to Attendance</Button>
         </Link>
       </div>

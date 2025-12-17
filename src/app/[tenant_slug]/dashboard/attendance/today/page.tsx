@@ -15,8 +15,11 @@ import {
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { NotificationPermissionButton } from '@/components/notifications/NotificationPermissionButton';
+import { useParams } from 'next/navigation';
 
 export default function TodayAttendanceDashboardPage() {
+  const params = useParams();
+  const tenantSlug = params?.tenant_slug as string;
   const { data: dashboard, isLoading, refetch } = useTodayAttendanceDashboard();
   const { notifications, isConnected, dashboardUpdateTrigger } = useNotifications();
 
@@ -111,7 +114,7 @@ export default function TodayAttendanceDashboardPage() {
             <RefreshCw className="w-4 h-4 mr-2" />
             Refresh
           </Button>
-          <Link href="/dashboard/attendance/history">
+          <Link href={tenantSlug ? `/${tenantSlug}/dashboard/attendance/history` : '/dashboard/attendance/history'}>
             <Button variant="secondary">View History</Button>
           </Link>
         </div>

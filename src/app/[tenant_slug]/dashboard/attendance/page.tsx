@@ -10,6 +10,7 @@ import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import Link from 'next/link';
 import { format } from 'date-fns';
+import { useParams } from 'next/navigation';
 
 // Helper component for Digital Clock
 function DigitalClock() {
@@ -28,6 +29,8 @@ function DigitalClock() {
 }
 
 export default function AttendancePage() {
+  const params = useParams();
+  const tenantSlug = params?.tenant_slug as string;
   const user = useAuthStore((state) => state.user);
   const [selectedEmployeeId, setSelectedEmployeeId] = useState('');
   const [notes, setNotes] = useState('');
@@ -236,7 +239,7 @@ export default function AttendancePage() {
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <h3 className="font-bold text-gray-900">Month Summary</h3>
-            <Link href="/dashboard/attendance/history" className="text-xs font-medium text-brand-navy hover:underline">
+            <Link href={tenantSlug ? `/${tenantSlug}/dashboard/attendance/history` : '/dashboard/attendance/history'} className="text-xs font-medium text-brand-navy hover:underline">
               View History
             </Link>
           </div>
