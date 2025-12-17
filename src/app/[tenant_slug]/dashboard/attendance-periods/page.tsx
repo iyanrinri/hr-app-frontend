@@ -7,8 +7,12 @@ import Link from 'next/link';
 import { Plus, Search, Filter, Eye, Edit, Trash2, CheckCircle, XCircle, Calendar } from 'lucide-react';
 import { useState } from 'react';
 import { AttendancePeriod } from '@/hooks/useAttendancePeriods';
+import { useParams } from 'next/navigation';
 
 export default function AttendancePeriodsPage() {
+  const params = useParams();
+  const tenantSlug = params?.tenant_slug as string;
+  
   // Filter inputs (not yet applied)
   const [searchInput, setSearchInput] = useState('');
   const [isActiveInput, setIsActiveInput] = useState('');
@@ -48,7 +52,7 @@ export default function AttendancePeriodsPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold text-gray-900">Attendance Periods</h2>
-        <Link href="/dashboard/attendance-periods/create">
+        <Link href={tenantSlug ? `/${tenantSlug}/dashboard/attendance-periods/create` : '/dashboard/attendance-periods/create'}>
           <Button>
             <Plus className="w-4 h-4 mr-2" />
             Add Period
@@ -159,7 +163,7 @@ export default function AttendancePeriodsPage() {
                         >
                           <Eye className="w-4 h-4" />
                         </Button>
-                        <Link href={`/dashboard/attendance-periods/${period.id}`}>
+                        <Link href={tenantSlug ? `/${tenantSlug}/dashboard/attendance-periods/${period.id}` : `/dashboard/attendance-periods/${period.id}`}>
                           <Button variant="secondary" className="p-2" title="Edit Period">
                             <Edit className="w-4 h-4" />
                           </Button>

@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/services/api';
 import { toast } from 'react-hot-toast';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 
 export interface Holiday {
   id: string;
@@ -102,6 +102,8 @@ export const useActivePeriod = () => {
 export const useCreateAttendancePeriod = () => {
   const queryClient = useQueryClient();
   const router = useRouter();
+  const params = useParams();
+  const tenantSlug = params?.tenant_slug as string;
 
   return useMutation({
     mutationFn: (data: Omit<AttendancePeriod, 'id' | 'createdBy' | 'createdAt' | 'updatedAt'>) => 
@@ -109,7 +111,7 @@ export const useCreateAttendancePeriod = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['attendance-periods'] });
       toast.success('Attendance period created successfully');
-      router.push('/dashboard/attendance-periods');
+      router.push(tenantSlug ? `/${tenantSlug}/dashboard/attendance-periods` : '/dashboard/attendance-periods');
     },
     onError: () => {
       toast.error('Failed to create attendance period');
@@ -120,6 +122,8 @@ export const useCreateAttendancePeriod = () => {
 export const useUpdateAttendancePeriod = (id: string) => {
   const queryClient = useQueryClient();
   const router = useRouter();
+  const params = useParams();
+  const tenantSlug = params?.tenant_slug as string;
 
   return useMutation({
     mutationFn: (data: Partial<AttendancePeriod>) => 
@@ -128,7 +132,7 @@ export const useUpdateAttendancePeriod = (id: string) => {
       queryClient.invalidateQueries({ queryKey: ['attendance-periods'] });
       queryClient.invalidateQueries({ queryKey: ['attendance-periods', id] });
       toast.success('Attendance period updated successfully');
-      router.push('/dashboard/attendance-periods');
+      router.push(tenantSlug ? `/${tenantSlug}/dashboard/attendance-periods` : '/dashboard/attendance-periods');
     },
     onError: () => {
       toast.error('Failed to update attendance period');
