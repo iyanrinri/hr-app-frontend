@@ -5,7 +5,7 @@ import { useAttendanceStats } from '@/hooks/useAttendance';
 import { EmployeeSelector } from '@/components/attendance/EmployeeSelector';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/Card';
-import { Clock, LogIn, LogOut, MapPin, Calendar, UserCheck, UserX, AlertTriangle, Timer } from 'lucide-react';
+import { LogIn, LogOut, MapPin, Calendar, UserCheck, UserX, AlertTriangle, Timer } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import Link from 'next/link';
@@ -14,12 +14,25 @@ import { useParams } from 'next/navigation';
 
 // Helper component for Digital Clock
 function DigitalClock() {
-  const [time, setTime] = useState(new Date());
+  const [time, setTime] = useState<Date | null>(null);
 
   useEffect(() => {
+    // Set initial time and start interval
+    // This is intentional for hydration fix - we need to set time on client mount
+    // eslint-disable-next-line
+    setTime(new Date());
     const timer = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
+
+  // Prevent hydration mismatch by showing placeholder until client-side
+  if (!time) {
+    return (
+      <div className="font-mono text-3xl md:text-4xl font-bold tracking-wider text-brand-navy">
+        --:--:--
+      </div>
+    );
+  }
 
   return (
     <div className="font-mono text-3xl md:text-4xl font-bold tracking-wider text-brand-navy">
@@ -148,15 +161,14 @@ export default function AttendancePage() {
         <div className="lg:col-span-2 space-y-6">
           
           {/* Hero Card: Today's Status */}
-          <div className="bg-white rounded-2xl shadow-xl shadow-brand-navy/5 overflow-hidden border border-gray-100 relative">
-             <div className="absolute top-0 right-0 p-4 opacity-10">
-               <Clock className="w-32 h-32 text-brand-navy" />
-             </div>
-             
-             <div className="p-8 relative z-10">
+          <div className="bg-white rounded-2xl shadow-xl shadow-brand-navy/5 overflow-hidden border border-gray-100">
+             <div className="p-8">
                <div className="flex justify-between items-start mb-8">
                  <div>
-                   <h3 className="text-lg font-medium text-gray-500">Today&apos;s Status</h3>
+                   <div className="flex items-center gap-2 mb-2">
+                     <Calendar className="w-5 h-5 text-gray-400" />
+                     <h3 className="text-lg font-medium text-gray-500">Today&apos;s Status</h3>
+                   </div>
                    {loadingToday ? (
                       <div className="h-8 w-32 bg-gray-100 rounded animate-pulse mt-2"></div>
                    ) : (
@@ -168,7 +180,10 @@ export default function AttendancePage() {
                  
                  {todayAttendance?.workDuration && (
                    <div className="text-right">
-                     <p className="text-sm text-gray-500">Duration</p>
+                     <div className="flex items-center justify-end gap-2 mb-2">
+                       <Timer className="w-5 h-5 text-gray-400" />
+                       <p className="text-sm text-gray-500">Duration</p>
+                     </div>
                      <p className="text-3xl font-bold text-brand-navy">
                        {(todayAttendance.workDuration / 60).toFixed(1)}<span className="text-sm font-normal text-gray-400 ml-1">hrs</span>
                      </p>
@@ -215,7 +230,17 @@ export default function AttendancePage() {
                    disabled={clockingIn || isGettingLocation || !!todayAttendance?.checkIn}
                    className={`h-14 text-lg font-bold shadow-lg shadow-blue-500/20 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 border-0 ${!!todayAttendance?.checkIn ? 'opacity-50 grayscale' : ''}`}
                  >
-                   {isGettingLocation ? 'Locating...' : 'Clock In'}
+                   {isGettingLocation ? (
+                     <>
+                       <MapPin className="w-5 h-5 mr-2 animate-pulse" />
+                       Locating...
+                     </>
+                   ) : (
+                     <>
+                       <LogIn className="w-5 h-5 mr-2" />
+                       Clock In
+                     </>
+                   )}
                  </Button>
                  
                  <Button
@@ -223,7 +248,17 @@ export default function AttendancePage() {
                    disabled={clockingOut || isGettingLocation || !todayAttendance?.checkIn}
                    className={`h-14 text-lg font-bold shadow-lg shadow-orange-500/20 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white border-0 ${!todayAttendance?.checkIn ? 'opacity-50 grayscale' : ''}`}
                  >
-                   {isGettingLocation ? 'Locating...' : 'Clock Out'}
+                   {isGettingLocation ? (
+                     <>
+                       <MapPin className="w-5 h-5 mr-2 animate-pulse" />
+                       Locating...
+                     </>
+                   ) : (
+                     <>
+                       <LogOut className="w-5 h-5 mr-2" />
+                       Clock Out
+                     </>
+                   )}
                  </Button>
                </div>
                

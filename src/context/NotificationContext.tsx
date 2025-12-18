@@ -4,7 +4,7 @@ import React, { createContext, useContext, useEffect, useState, ReactNode } from
 import { io, Socket } from 'socket.io-client';
 import { useAuthStore } from '@/store/authStore';
 import { toast } from 'react-hot-toast';
-import { UserCheck, LogOut, BarChart3 } from 'lucide-react';
+import { UserCheck, BarChart3, AlertTriangle } from 'lucide-react';
 
 interface AttendanceNotification {
   type: 'CLOCK_IN' | 'CLOCK_OUT';
@@ -33,9 +33,28 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   const [unreadCount, setUnreadCount] = useState(0);
   const [dashboardUpdateTrigger, setDashboardUpdateTrigger] = useState(0);
   const token = useAuthStore((state) => state.token);
+  const user = useAuthStore((state) => state.user);
 
   useEffect(() => {
     if (!token) return;
+
+    // Only connect WebSocket for SUPER/ADMIN/HR roles
+    const allowedRoles = ['SUPER', 'ADMIN', 'HR'];
+    if (!user || !allowedRoles.includes(user.role)) {
+      console.log('ℹ️ WebSocket disabled for role:', user?.role || 'unknown');
+      return;
+    }
+
+    // Extract tenantSlug from URL pathname (e.g., /my_company/dashboard/...)
+    const pathParts = window.location.pathname.split('/');
+    const tenantSlug = pathParts[1]; // First segment after /
+    
+    if (!tenantSlug) {
+      console.warn('⚠️ No tenantSlug found in URL');
+      return;
+    }
+
+    console.log('🔌 Initializing WebSocket for role:', user.role);
 
     // Request notification permission
     if ('Notification' in window && Notification.permission === 'default') {
@@ -44,8 +63,8 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       });
     }
 
-    // Connect to WebSocket
-    const socketInstance = io('ws://localhost:3000/notifications', {
+    // Connect to WebSocket - FIXED: Use /attendance namespace
+    const socketInstance = io('http://localhost:3000/attendance', {
       auth: {
         token: `Bearer ${token}`
       },
@@ -54,78 +73,69 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       reconnectionDelay: 1000
     });
 
-    socketInstance.on('connect_error', () => {
-      // console.error('❌ [NotificationContext] Connection Error');
+    socketInstance.on('connect_error', (error) => {
+      console.error('❌ [WebSocket] Connection Error:', error);
     });
 
     socketInstance.on('connect', () => {
-      console.log('✅ Connected to notifications WebSocket');
+      console.log('✅ Connected to attendance WebSocket');
       setIsConnected(true);
+      
+      // FIXED: Emit join-tenant event to join the tenant room
+      socketInstance.emit('join-tenant', { tenantSlug });
+      console.log('🏢 Joined tenant room:', tenantSlug);
     });
 
     socketInstance.on('disconnect', () => {
-      console.log('❌ Disconnected from notifications WebSocket');
+      console.log('❌ Disconnected from attendance WebSocket');
       setIsConnected(false);
     });
 
-    socketInstance.on('attendance-notification', (data: AttendanceNotification) => {
-      console.log('🔔 [ATTENDANCE-NOTIFICATION] Received:', {
-        type: data.type,
-        employeeId: data.employeeId,
-        employeeName: data.employeeName,
-        timestamp: data.timestamp,
-        message: data.message,
-        fullData: data
-      });
-      setNotifications((prev) => [data, ...prev]);
-      setUnreadCount((prev) => prev + 1);
-
-      // Determine icon based on type
-      const Icon = data.type === 'CLOCK_IN' ? UserCheck : LogOut;
-      const iconColor = data.type === 'CLOCK_IN' ? 'text-green-600' : 'text-amber-600';
-
-      // Show toast notification
-      toast.success(data.message || `${data.employeeName} - ${data.type}`, {
-        duration: 10000,
-        position: 'top-right',
-        icon: <Icon className={`w-6 h-6 ${iconColor}`} />
-      });
-
-      // Show browser notification
-      if ('Notification' in window && Notification.permission === 'granted') {
-        const notification = new Notification('Attendance Update', {
-          body: data.message || `${data.employeeName} - ${data.type}`,
-          icon: '/favicon.ico',
-          badge: '/favicon.ico',
-          tag: 'attendance-notification',
-          requireInteraction: false,
-        });
-
-        // Play notification sound
-        const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIGGS57OihUBELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU2jdXvzn0pBSh+zPLaizsKGGO56+mjUhELTKXh8bllHAU');
-        audio.play().catch(err => console.log('Could not play sound:', err));
-
-        // Auto-close notification after 5 seconds
-        setTimeout(() => notification.close(), 5000);
-      }
-    });
-
+    // FIXED: Listen to attendance.dashboard-update event
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    socketInstance.on('dashboard-update', (event: any) => {
-      console.log('📊 [DASHBOARD-UPDATE] Received:', {
+    socketInstance.on('attendance.dashboard-update', (data: any) => {
+      console.log('� [ATTENDANCE.DASHBOARD-UPDATE] Received:', {
         timestamp: new Date().toISOString(),
-        data: event
+        data: data
       });
       
-      // Trigger dashboard refresh by incrementing counter
+      // Trigger dashboard refresh
       setDashboardUpdateTrigger((prev) => prev + 1);
 
-      // Show toast notification using the message from the event
-      // Structure might be event.data.message or event.message depending on backend
-      const message = event?.data?.message || event?.message || 'Attendance Updated';
+      // Parse dashboard data to show notifications
+      const { presentEmployees = [], lateEmployees = [] } = data;
       
-      toast.success(message, {
-        duration: 10000,
+      // Show notification for latest employee activity
+      if (presentEmployees.length > 0) {
+        const latestEmployee = presentEmployees[0];
+        const isLate = lateEmployees.some((emp: { id: string }) => emp.id === latestEmployee.id);
+        
+        const notification: AttendanceNotification = {
+          type: 'CLOCK_IN',
+          employeeId: latestEmployee.id,
+          employeeName: `${latestEmployee.firstName} ${latestEmployee.lastName}`,
+          timestamp: latestEmployee.checkIn || new Date().toISOString(),
+          message: isLate 
+            ? `${latestEmployee.firstName} ${latestEmployee.lastName} clocked in (Late)` 
+            : `${latestEmployee.firstName} ${latestEmployee.lastName} clocked in`
+        };
+
+        setNotifications((prev) => [notification, ...prev]);
+        setUnreadCount((prev) => prev + 1);
+
+        const Icon = isLate ? AlertTriangle : UserCheck;
+        const iconColor = isLate ? 'text-yellow-600' : 'text-green-600';
+
+        toast.success(notification.message, {
+          duration: 10000,
+          position: 'top-right',
+          icon: <Icon className={`w-6 h-6 ${iconColor}`} />
+        });
+      }
+
+      // General dashboard update toast
+      toast.success('Dashboard updated', {
+        duration: 5000,
         position: 'top-right',
         icon: <BarChart3 className="w-6 h-6 text-brand-navy" />
       });
@@ -146,7 +156,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     return () => {
       socketInstance.disconnect();
     };
-  }, [token]);
+  }, [token, user]);
 
   const markAsRead = () => {
     setUnreadCount(0);
