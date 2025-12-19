@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { ArrowLeft } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -22,6 +22,8 @@ type FormValues = z.infer<typeof schema>;
 
 export default function CreateLeavePeriodPage() {
   const router = useRouter();
+  const params = useParams();
+  const tenantSlug = params?.tenant_slug as string;
   const { mutate: createPeriod, isPending } = useCreateLeavePeriod();
   
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
@@ -30,7 +32,7 @@ export default function CreateLeavePeriodPage() {
 
   const onSubmit = (data: FormValues) => {
     createPeriod(data as CreateLeavePeriodPayload, {
-      onSuccess: () => router.push('/dashboard/leaves/periods')
+      onSuccess: () => router.push(`/${tenantSlug}/dashboard/leaves/periods`)
     });
   };
 

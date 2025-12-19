@@ -19,6 +19,7 @@ const navigation = [
   { name: 'Leave Config', href: '/dashboard/leaves/periods', icon: CalendarClock, roles: ['SUPER', 'ADMIN', 'HR'] },
   { name: 'My Leaves', href: '/dashboard/leaves/my', icon: FileText }, // All roles
   { name: 'Approvals', href: '/dashboard/leaves/approvals', icon: CheckSquare, roles: ['SUPER', 'ADMIN', 'HR', 'MANAGER'] },
+  { name: 'Leave Admin', href: '/dashboard/leaves/admin', icon: BarChart3, roles: ['SUPER', 'ADMIN', 'HR'] },
   // Overtime
   { name: 'My Overtime', href: '/dashboard/overtime/my', icon: Timer }, // All roles
   { name: 'Pending Overtime', href: '/dashboard/overtime/pending', icon: Hourglass, roles: ['SUPER', 'ADMIN', 'HR', 'MANAGER'] },

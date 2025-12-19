@@ -5,11 +5,14 @@ import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Plus, Edit, Trash, Check, X } from 'lucide-react';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { format } from 'date-fns';
 
 export default function LeavePeriodsPage() {
   const { data: response, isLoading } = useLeavePeriods();
   const { mutate: deletePeriod } = useDeleteLeavePeriod();
+  const params = useParams();
+  const tenantSlug = params?.tenant_slug as string;
 
   const periods = response?.data || [];
 
@@ -28,7 +31,7 @@ export default function LeavePeriodsPage() {
           <h2 className="text-2xl font-bold text-gray-900">Leave Configuration</h2>
           <p className="text-sm text-gray-500">Manage leave periods and entitlements</p>
         </div>
-        <Link href="/dashboard/leaves/periods/create">
+        <Link href={`/${tenantSlug}/dashboard/leaves/periods/create`}>
           <Button>
             <Plus className="w-4 h-4 mr-2" />
             Create Period
@@ -79,7 +82,7 @@ export default function LeavePeriodsPage() {
                       </td>
                       <td className="px-4 py-3 text-gray-500 truncate max-w-[200px]">{period.description}</td>
                       <td className="px-4 py-3 text-right space-x-2">
-                        <Link href={`/dashboard/leaves/periods/${period.id}`}>
+                        <Link href={`/${tenantSlug}/dashboard/leaves/periods/${period.id}`}>
                           <Button variant="secondary" className="h-8 px-2">
                             <Edit className="w-4 h-4" />
                           </Button>
