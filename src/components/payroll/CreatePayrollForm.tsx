@@ -15,10 +15,32 @@ interface CreatePayrollFormProps {
   isSubmitting?: boolean;
 }
 
+// Helper function to get first and last day of current month
+const getCurrentMonthDates = () => {
+  const now = new Date();
+  const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+  const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+  
+  // Format to YYYY-MM-DD for input[type="date"]
+  const formatDate = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+  
+  return {
+    start: formatDate(firstDay),
+    end: formatDate(lastDay)
+  };
+};
+
 export default function CreatePayrollForm({ onSubmit, isSubmitting }: CreatePayrollFormProps) {
+  const currentMonth = getCurrentMonthDates();
+  
   const [employeeId, setEmployeeId] = useState<string>('');
-  const [periodStart, setPeriodStart] = useState<string>('');
-  const [periodEnd, setPeriodEnd] = useState<string>('');
+  const [periodStart, setPeriodStart] = useState<string>(currentMonth.start);
+  const [periodEnd, setPeriodEnd] = useState<string>(currentMonth.end);
   const [deductions, setDeductions] = useState<string>('0');
   const [bonuses, setBonuses] = useState<string>('0');
   const [selectedOvertimeIds, setSelectedOvertimeIds] = useState<string[]>([]);

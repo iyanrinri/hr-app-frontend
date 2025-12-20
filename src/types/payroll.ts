@@ -72,12 +72,12 @@ export interface PayrollListResponse {
 
 export interface PayrollSummary {
   totalPayrolls: number;
-  totalPaid: number;
-  totalUnpaid: number;
-  totalGrossSalary: string;
-  totalNetSalary: string;
+  totalBaseSalary: string;
   totalOvertimePay: string;
   totalDeductions: string;
   totalBonuses: string;
-  averageNetSalary: string;
+  totalGrossSalary: string;
+  totalNetSalary: string;
+  totalOvertimeHours: string;
+  totalRegularHours: string;
 }

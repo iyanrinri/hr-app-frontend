@@ -17,6 +17,7 @@ export default function PayrollDetailPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const id = params.id as string;
+  const tenantSlug = params?.tenant_slug as string;
 
   const { data: payroll, isLoading } = useQuery({
     queryKey: ['payroll', id],
@@ -47,7 +48,7 @@ export default function PayrollDetailPage() {
     mutationFn: PayrollService.deletePayroll,
     onSuccess: () => {
       toast.success('Payroll deleted successfully');
-      router.push('/dashboard/payroll');
+      router.push(`/${tenantSlug}/dashboard/payroll`);
     },
     onError: () => toast.error('Failed to delete payroll')
   });

@@ -16,7 +16,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { HierarchyManager } from '@/components/employees/HierarchyManager';
-import { EmployeeSalaryHistory } from '@/components/employees/EmployeeSalaryHistory';
+import { EmployeeSalaryAdjustmentHistory } from '@/components/employees/EmployeeSalaryAdjustmentHistory';
 
 const employeeSchema = z.object({
   firstName: z.string().min(2, 'First Name must be at least 2 characters'),
@@ -275,7 +275,7 @@ export default function EditEmployeePage() {
         )}
 
         {activeTab === 'salary' && (
-          <EmployeeSalaryHistory 
+          <EmployeeSalaryAdjustmentHistory 
             employeeId={id} 
             currentBaseSalary={employee?.baseSalary} 
           />

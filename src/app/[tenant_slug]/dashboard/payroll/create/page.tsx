@@ -5,13 +5,15 @@ import CreatePayrollForm from '@/components/payroll/CreatePayrollForm';
 import { PayrollService } from '@/services/payroll.service';
 import { CreatePayrollRequest } from '@/types/payroll';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import { ChevronLeft } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 
 export default function CreatePayrollPage() {
   const router = useRouter();
+  const params = useParams();
+  const tenantSlug = params?.tenant_slug as string;
   const queryClient = useQueryClient();
 
   const createMutation = useMutation({
@@ -20,7 +22,7 @@ export default function CreatePayrollPage() {
       queryClient.invalidateQueries({ queryKey: ['payrolls'] });
       queryClient.invalidateQueries({ queryKey: ['payroll-summary'] });
       toast.success('Payroll created successfully');
-      router.push('/dashboard/payroll');
+      router.push(`/${tenantSlug}/dashboard/payroll`);
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError: (error: any) => {

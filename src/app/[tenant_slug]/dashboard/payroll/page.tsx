@@ -2,16 +2,19 @@
 
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useParams } from 'next/navigation';
 import { PayrollService } from '@/services/payroll.service';
 import { PayrollStatus } from '@/types/payroll';
 import PayrollTable from '@/components/payroll/PayrollTable';
 import PayrollSummaryCard from '@/components/payroll/PayrollSummaryCard';
 import { Button } from '@/components/ui/Button';
-import { Plus, Download } from 'lucide-react';
+import { Plus, Download, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
 
 export default function PayrollAdminPage() {
+  const params = useParams();
+  const tenantSlug = params?.tenant_slug as string;
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
@@ -94,7 +97,7 @@ export default function PayrollAdminPage() {
             <Download className="mr-2 h-4 w-4" />
             Export
           </Button>
-          <Link href="/dashboard/payroll/create">
+          <Link href={`/${tenantSlug}/dashboard/payroll/create`}>
             <Button className="bg-brand-cyan hover:bg-brand-cyan/90 text-white">
               <Plus className="mr-2 h-4 w-4" />
               Create Payroll
@@ -110,9 +113,9 @@ export default function PayrollAdminPage() {
           <div className="flex-1 relative">
              {/* Using standard inputs for now as filters */}
              <div className="flex gap-4">
-               <div className="w-1/3">
+               <div className="w-1/3 relative">
                  <select 
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-brand-cyan focus:border-brand-cyan"
+                  className="w-full appearance-none px-4 py-2.5 pr-10 border-2 border-gray-300 rounded-lg bg-white text-gray-700 font-medium focus:outline-none focus:ring-2 focus:ring-brand-cyan focus:border-brand-cyan hover:border-gray-400 transition-colors cursor-pointer"
                   value={status}
                   onChange={(e) => setStatus(e.target.value as PayrollStatus)}
                  >
@@ -121,10 +124,11 @@ export default function PayrollAdminPage() {
                    <option value={PayrollStatus.PROCESSED}>Processed</option>
                    <option value={PayrollStatus.PAID}>Paid</option>
                  </select>
+                 <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 pointer-events-none" />
                </div>
-               <div className="w-1/3">
+               <div className="w-1/3 relative">
                  <select 
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-brand-cyan focus:border-brand-cyan"
+                  className="w-full appearance-none px-4 py-2.5 pr-10 border-2 border-gray-300 rounded-lg bg-white text-gray-700 font-medium focus:outline-none focus:ring-2 focus:ring-brand-cyan focus:border-brand-cyan hover:border-gray-400 transition-colors cursor-pointer"
                   value={department}
                   onChange={(e) => setDepartment(e.target.value)}
                  >
@@ -134,6 +138,7 @@ export default function PayrollAdminPage() {
                    <option value="Finance">Finance</option>
                    {/* Add more departments as needed or fetch dynamically */}
                  </select>
+                 <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 pointer-events-none" />
                </div>
              </div>
           </div>

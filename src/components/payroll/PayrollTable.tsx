@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/Button';
 import PayrollStatusBadge from './PayrollStatusBadge';
 import { Eye, CheckCircle, DollarSign, Trash2, Calendar } from 'lucide-react';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { formatCurrency } from '@/lib/utils'; // Assuming this exists, if not I will check utils.ts
 
 interface PayrollTableProps {
@@ -23,6 +24,8 @@ export default function PayrollTable({
   onDelete,
   isAdmin = false 
 }: PayrollTableProps) {
+  const params = useParams();
+  const tenantSlug = params?.tenant_slug as string;
   
   if (isLoading) {
     return (
@@ -107,7 +110,7 @@ export default function PayrollTable({
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <div className="flex justify-end space-x-2">
-                    <Link href={`/dashboard/payroll/${payroll.id}`} passHref>
+                    <Link href={`/${tenantSlug}/dashboard/payroll/${payroll.id}`} passHref>
                       <Button variant="secondary" className="p-2" title="View Details">
                         <Eye className="w-4 h-4" />
                       </Button>
