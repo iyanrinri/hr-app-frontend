@@ -1,6 +1,6 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useEmployee, useUpdateEmployee } from '@/hooks/useEmployees';
@@ -10,11 +10,13 @@ import { ProfileForm } from '@/components/profile/ProfileForm';
 import { ProfilePictureUpload } from '@/components/profile/ProfilePictureUpload';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { CurrencyInput } from '@/components/ui/CurrencyInput';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { useRouter, useParams } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { HierarchyManager } from '@/components/employees/HierarchyManager';
+import { EmployeeSalaryHistory } from '@/components/employees/EmployeeSalaryHistory';
 
 const employeeSchema = z.object({
   firstName: z.string().min(2, 'First Name must be at least 2 characters'),
@@ -23,7 +25,7 @@ const employeeSchema = z.object({
   password: z.string().optional().or(z.literal('')),
   position: z.string().min(2, 'Position is required'),
   department: z.string().min(2, 'Department is required'),
-  baseSalary: z.coerce.number().min(0, 'Salary must be positive'),
+  baseSalary: z.number().min(0, 'Salary must be positive'),
 });
 
 type EmployeeFormValues = z.infer<typeof employeeSchema>;
@@ -45,7 +47,7 @@ export default function EditEmployeePage() {
   const { mutateAsync: uploadPicture, isPending: isUploadingPicture } = useUploadEmployeePicture(id);
   const { mutateAsync: deletePicture, isPending: isDeletingPicture } = useDeleteEmployeePicture(id);
 
-  const [activeTab, setActiveTab] = useState<'details' | 'profile' | 'management'>('details');
+  const [activeTab, setActiveTab] = useState<'details' | 'profile' | 'management' | 'salary'>('details');
   const [isEditingProfile, setIsEditingProfile] = useState(false);
 
   // ... (rest of hook calls)
@@ -54,9 +56,10 @@ export default function EditEmployeePage() {
     register,
     handleSubmit,
     reset,
+    control,
     formState: { errors },
   } = useForm<EmployeeFormValues>({
-    resolver: zodResolver(employeeSchema) as any,
+    resolver: zodResolver(employeeSchema),
   });
 
   useEffect(() => {
@@ -126,6 +129,16 @@ export default function EditEmployeePage() {
         >
           Management & Hierarchy
         </button>
+        <button
+          className={`px-4 py-2 font-medium text-sm transition-colors border-b-2 whitespace-nowrap ${
+            activeTab === 'salary' 
+              ? 'border-brand-navy text-brand-navy' 
+              : 'border-transparent text-gray-500 hover:text-gray-700'
+          }`}
+          onClick={() => setActiveTab('salary')}
+        >
+          Salary & History
+        </button>
       </div>
 
       <div className="mt-6">
@@ -170,11 +183,18 @@ export default function EditEmployeePage() {
                     error={errors.department?.message}
                     {...register('department')}
                   />
-                  <Input
-                    label="Base Salary"
-                    type="number"
-                    error={errors.baseSalary?.message}
-                    {...register('baseSalary')}
+                  <Controller
+                    name="baseSalary"
+                    control={control}
+                    render={({ field }) => (
+                      <CurrencyInput
+                        label="Base Salary"
+                        value={field.value}
+                        onChange={field.onChange}
+                        error={errors.baseSalary?.message}
+                        placeholder="0"
+                      />
+                    )}
                   />
                 </div>
 
@@ -252,6 +272,13 @@ export default function EditEmployeePage() {
 
         {activeTab === 'management' && (
           <HierarchyManager employeeId={id} />
+        )}
+
+        {activeTab === 'salary' && (
+          <EmployeeSalaryHistory 
+            employeeId={id} 
+            currentBaseSalary={employee?.baseSalary} 
+          />
         )}
       </div>
     </div>

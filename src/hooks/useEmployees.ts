@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/services/api';
 import { toast } from 'react-hot-toast';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 
 export interface Employee {
   id: string;
@@ -90,13 +90,15 @@ export interface CreateEmployeePayload {
 export const useCreateEmployee = () => {
   const queryClient = useQueryClient();
   const router = useRouter();
+  const params = useParams();
+  const tenantSlug = params?.tenant_slug as string;
 
   return useMutation({
     mutationFn: (data: CreateEmployeePayload) => api.post('/employees', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['employees'] });
       toast.success('Employee created successfully');
-      router.push('/dashboard/employees');
+      router.push(`/${tenantSlug}/dashboard/employees`);
     },
     onError: () => {
       toast.error('Failed to create employee');
@@ -107,6 +109,8 @@ export const useCreateEmployee = () => {
 export const useUpdateEmployee = (id: string) => {
   const queryClient = useQueryClient();
   const router = useRouter();
+  const params = useParams();
+  const tenantSlug = params?.tenant_slug as string;
 
   return useMutation({
     mutationFn: (data: Partial<Employee>) => api.put(`/employees/${id}`, data),
@@ -114,7 +118,7 @@ export const useUpdateEmployee = (id: string) => {
       queryClient.invalidateQueries({ queryKey: ['employees'] });
       queryClient.invalidateQueries({ queryKey: ['employees', id] });
       toast.success('Employee updated successfully');
-      router.push('/dashboard/employees');
+      router.push(`/${tenantSlug}/dashboard/employees`);
     },
     onError: () => {
       toast.error('Failed to update employee');

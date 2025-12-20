@@ -40,6 +40,12 @@ export const PayrollService = {
     return response.data;
   },
 
+  // Get payroll history for a specific employee (Admin/HR)
+  getEmployeePayrollHistory: async (employeeId: string, params?: Partial<PayrollFilters>): Promise<PayrollListResponse> => {
+    const response = await api.get(`/payroll/employee/${employeeId}`, { params });
+    return response.data;
+  },
+
   // Process multiple payroll records
   processPayrolls: async (data: ProcessPayrollRequest): Promise<{ processed: number; message: string }> => {
     const response = await api.put('/payroll/process', data);
