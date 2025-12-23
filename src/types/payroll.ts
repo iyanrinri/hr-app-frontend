@@ -81,3 +81,32 @@ export interface PayrollSummary {
   totalOvertimeHours: string;
   totalRegularHours: string;
 }
+
+// Bulk Generate Payroll Types
+export interface BulkGeneratePayrollRequest {
+  periodStart: string; // ISO 8601 date string
+  periodEnd: string; // ISO 8601 date string
+  bonusPercentage?: number; // 0-100
+  deductions?: Record<string, string>; // { employeeId: amount }
+  employeeIds?: string[]; // Optional - if not provided, generate for all active employees
+}
+
+export interface FailedPayrollGeneration {
+  employeeId: string;
+  employeeName?: string;
+  reason: string;
+}
+
+export interface BulkGeneratePayrollResponse {
+  generated: number;
+  failed: FailedPayrollGeneration[];
+  payrolls: Payroll[];
+}
+
+// UI State for Deductions Manager
+export interface DeductionEntry {
+  id: string; // Temporary ID for UI
+  employeeId: string;
+  employeeName: string;
+  amount: string;
+}

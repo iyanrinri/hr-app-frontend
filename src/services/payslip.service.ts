@@ -55,8 +55,8 @@ export const PayslipService = {
     return response.data;
   },
 
-  // Get my payslip history
-  getMyPayslipHistory: async (): Promise<PayslipListResponse> => {
+  // Get my payslip history (returns array directly)
+  getMyPayslipHistory: async (): Promise<Payslip[]> => {
     const response = await api.get('/payslip/my/history');
     return response.data;
   },

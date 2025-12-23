@@ -11,7 +11,9 @@ export default function MyPayslipsPage() {
     queryFn: () => PayslipService.getMyPayslipHistory()
   });
 
-  const payslips = payslipsResponse?.data || [];
+  // API returns array directly, not wrapped in { data: [] }
+  const payslips = payslipsResponse || [];
+
 
   return (
     <div className="space-y-6">

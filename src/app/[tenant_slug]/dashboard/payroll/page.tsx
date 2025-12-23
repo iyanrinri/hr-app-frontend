@@ -4,11 +4,14 @@ import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import { PayrollService } from '@/services/payroll.service';
-import { PayrollStatus } from '@/types/payroll';
+import { PayrollStatus, BulkGeneratePayrollRequest } from '@/types/payroll';
+import { PayslipService } from '@/services/payslip.service';
 import PayrollTable from '@/components/payroll/PayrollTable';
 import PayrollSummaryCard from '@/components/payroll/PayrollSummaryCard';
+import BulkGenerateModal from '@/components/payroll/BulkGenerateModal';
+import BulkGenerateResultModal from '@/components/payroll/BulkGenerateResultModal';
 import { Button } from '@/components/ui/Button';
-import { Plus, Download, ChevronDown } from 'lucide-react';
+import { Plus, Download, ChevronDown, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
 
@@ -20,6 +23,14 @@ export default function PayrollAdminPage() {
   const [limit] = useState(10);
   const [status, setStatus] = useState<PayrollStatus | ''>('');
   const [department, setDepartment] = useState('');
+  
+  // Bulk generate modal state
+  const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
+  const [isResultModalOpen, setIsResultModalOpen] = useState(false);
+  const [bulkResult, setBulkResult] = useState<{
+    generated: number;
+    failed: { employeeId: string; employeeName?: string; reason: string }[];
+  }>({ generated: 0, failed: [] });
   
   // Fetch Payrolls
   const { data, isLoading } = useQuery({
@@ -71,12 +82,67 @@ export default function PayrollAdminPage() {
     onError: () => toast.error('Failed to delete payroll')
   });
 
+  // Bulk Generate Mutation
+  const bulkGenerateMutation = useMutation({
+    mutationFn: PayrollService.bulkGeneratePayroll,
+    onSuccess: (response) => {
+      queryClient.invalidateQueries({ queryKey: ['payrolls'] });
+      queryClient.invalidateQueries({ queryKey: ['payroll-summary'] });
+      
+      setBulkResult({
+        generated: response.generated,
+        failed: response.failed
+      });
+      
+      setIsBulkModalOpen(false);
+      setIsResultModalOpen(true);
+      
+      if (response.failed.length === 0) {
+        toast.success(`Successfully generated ${response.generated} payrolls!`);
+      } else {
+        toast.success(`Generated ${response.generated} payrolls, ${response.failed.length} failed`);
+      }
+    },
+    onError: (error: unknown) => {
+      const message = (error as any)?.response?.data?.message || 'Failed to generate payrolls';
+      toast.error(message);
+    }
+  });
+
+  // Generate Payslip Mutation
+  const generatePayslipMutation = useMutation({
+    mutationFn: (payrollId: string) => PayslipService.generatePayslip({ payrollId }),
+    onSuccess: (payslip) => {
+      queryClient.invalidateQueries({ queryKey: ['payrolls'] });
+      toast.success(`Payslip generated for ${payslip.payroll?.employee?.firstName || 'employee'}`);
+    },
+    onError: (error: unknown) => {
+      const errorData = (error as any)?.response?.data;
+      if (errorData?.statusCode === 400) {
+        toast.error('Payslip already exists for this payroll');
+      } else {
+        const message = errorData?.message || 'Failed to generate payslip';
+        toast.error(message);
+      }
+    }
+  });
+
   const handleProcess = (id: string) => {
     processMutation.mutate({ payrollIds: [id] });
   };
 
   const handleMarkPaid = (id: string) => {
     markPaidMutation.mutate(id);
+  };
+
+  const handleBulkGenerate = (data: BulkGeneratePayrollRequest) => {
+    bulkGenerateMutation.mutate(data);
+  };
+
+  const handleGeneratePayslip = (payrollId: string) => {
+    if (confirm('Generate payslip for this payroll? This will calculate tax and BPJS deductions.')) {
+      generatePayslipMutation.mutate(payrollId);
+    }
   };
 
   const handleDelete = (id: string) => {
@@ -96,6 +162,13 @@ export default function PayrollAdminPage() {
           <Button variant="secondary">
             <Download className="mr-2 h-4 w-4" />
             Export
+          </Button>
+          <Button 
+            onClick={() => setIsBulkModalOpen(true)}
+            className="bg-purple-600 hover:bg-purple-700 text-white"
+          >
+            <RefreshCw className="mr-2 h-4 w-4" />
+            Bulk Generate
           </Button>
           <Link href={`/${tenantSlug}/dashboard/payroll/create`}>
             <Button className="bg-brand-cyan hover:bg-brand-cyan/90 text-white">
@@ -151,6 +224,7 @@ export default function PayrollAdminPage() {
           onProcess={handleProcess}
           onMarkPaid={handleMarkPaid}
           onDelete={handleDelete}
+          onGeneratePayslip={handleGeneratePayslip}
         />
 
         {/* Pagination */}
@@ -178,6 +252,22 @@ export default function PayrollAdminPage() {
           </div>
         )}
       </div>
+
+      {/* Bulk Generate Modal */}
+      <BulkGenerateModal
+        isOpen={isBulkModalOpen}
+        onClose={() => setIsBulkModalOpen(false)}
+        onSubmit={handleBulkGenerate}
+        isLoading={bulkGenerateMutation.isPending}
+      />
+
+      {/* Result Modal */}
+      <BulkGenerateResultModal
+        isOpen={isResultModalOpen}
+        onClose={() => setIsResultModalOpen(false)}
+        generated={bulkResult.generated}
+        failed={bulkResult.failed}
+      />
     </div>
   );
 }

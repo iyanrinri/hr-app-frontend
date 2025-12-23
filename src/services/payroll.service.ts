@@ -5,7 +5,9 @@ import {
   PayrollFilters, 
   PayrollListResponse, 
   ProcessPayrollRequest,
-  PayrollSummary 
+  PayrollSummary,
+  BulkGeneratePayrollRequest,
+  BulkGeneratePayrollResponse
 } from '@/types/payroll';
 
 export const PayrollService = {
@@ -61,6 +63,12 @@ export const PayrollService = {
   // Delete a payroll record
   deletePayroll: async (id: string): Promise<{ message: string }> => {
     const response = await api.delete(`/payroll/${id}`);
+    return response.data;
+  },
+
+  // Bulk generate payroll for multiple employees
+  bulkGeneratePayroll: async (data: BulkGeneratePayrollRequest): Promise<BulkGeneratePayrollResponse> => {
+    const response = await api.post('/payroll/bulk-generate', data);
     return response.data;
   }
 };

@@ -46,7 +46,7 @@ export interface Payslip {
   overtimePay: string;
   bonuses: string;
   allowances: string;
-  totalGross: string;
+  totalGross?: string; // Optional - calculated if not provided
   
   taxAmount: string;
   bpjsKesehatanEmployee: string;
@@ -54,7 +54,7 @@ export interface Payslip {
   bpjsKetenagakerjaanEmployee: string;
   bpjsKetenagakerjaanCompany: string;
   otherDeductions: string;
-  totalDeductions: string;
+  totalDeductions?: string; // Optional - calculated if not provided
   
   takeHomePay: string;
   
@@ -63,7 +63,7 @@ export interface Payslip {
   generatedAt: string;
   generatedBy: string;
   
-  payroll: Payroll;
+  payroll?: Payroll; // Optional - not always included in API responses
   deductions: DeductionItem[];
 }
 

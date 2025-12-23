@@ -17,6 +17,21 @@ export default function PayslipDetail({ payslip, isAdmin, onDelete }: PayslipDet
   const [isTaxDetailsOpen, setIsTaxDetailsOpen] = useState(false);
   const [isCompanyDetailsOpen, setIsCompanyDetailsOpen] = useState(false);
 
+  // Calculate totalGross if not provided
+  const totalGross = payslip.totalGross || 
+    (parseFloat(payslip.grossSalary || '0') + 
+     parseFloat(payslip.overtimePay || '0') + 
+     parseFloat(payslip.bonuses || '0') + 
+     parseFloat(payslip.allowances || '0')).toString();
+
+  // Calculate totalDeductions if not provided
+  const totalDeductions = payslip.totalDeductions ||
+    payslip.deductions?.reduce((sum, d) => sum + parseFloat(d.amount.toString() || '0'), 0).toString() ||
+    (parseFloat(payslip.taxAmount || '0') + 
+     parseFloat(payslip.bpjsKesehatanEmployee || '0') + 
+     parseFloat(payslip.bpjsKetenagakerjaanEmployee || '0') + 
+     parseFloat(payslip.otherDeductions || '0')).toString();
+
   const handlePrint = () => {
     window.print();
   };
@@ -52,7 +67,10 @@ export default function PayslipDetail({ payslip, isAdmin, onDelete }: PayslipDet
           <h2 className="text-2xl font-bold uppercase tracking-wide">Slip Gaji / Payslip</h2>
           <p className="text-gray-600">Company Name Inc.</p>
           <div className="mt-2 text-sm text-gray-500">
-             Periode: {new Date(payslip.payroll.periodStart).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })}
+             Periode: {payslip.payroll?.periodStart 
+               ? new Date(payslip.payroll.periodStart).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })
+               : 'N/A'
+             }
           </div>
           <div className="text-xs text-gray-400 mt-1">
              Generated: {new Date(payslip.generatedAt).toLocaleString()}
@@ -66,15 +84,15 @@ export default function PayslipDetail({ payslip, isAdmin, onDelete }: PayslipDet
                     <tbody>
                         <tr>
                             <td className="text-gray-500 py-1" width="100">Name</td>
-                            <td className="font-semibold">: {payslip.payroll.employee?.firstName} {payslip.payroll.employee?.lastName}</td>
+                            <td className="font-semibold">: {payslip.payroll?.employee?.firstName || '-'} {payslip.payroll?.employee?.lastName || ''}</td>
                         </tr>
                         <tr>
                             <td className="text-gray-500 py-1">Position</td>
-                            <td className="font-semibold">: {payslip.payroll.employee?.position || '-'}</td>
+                            <td className="font-semibold">: {payslip.payroll?.employee?.position || '-'}</td>
                         </tr>
                         <tr>
                             <td className="text-gray-500 py-1">Department</td>
-                            <td className="font-semibold">: {payslip.payroll.employee?.department || '-'}</td>
+                            <td className="font-semibold">: {payslip.payroll?.employee?.department || '-'}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -88,7 +106,7 @@ export default function PayslipDetail({ payslip, isAdmin, onDelete }: PayslipDet
                         </tr>
                         <tr>
                             <td className="text-gray-500 py-1">Payment Date</td>
-                            <td className="font-semibold">: {payslip.payroll.processedAt ? new Date(payslip.payroll.processedAt).toLocaleDateString() : '-'}</td>
+                            <td className="font-semibold">: {payslip.payroll?.processedAt ? new Date(payslip.payroll.processedAt).toLocaleDateString() : '-'}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -103,10 +121,10 @@ export default function PayslipDetail({ payslip, isAdmin, onDelete }: PayslipDet
                     <tbody>
                         <tr>
                             <td className="py-1">Gaji Pokok</td>
-                            <td className="text-right font-medium">{formatCurrency(payslip.payroll.baseSalary)}</td>
+                            <td className="text-right font-medium">{formatCurrency(payslip.grossSalary)}</td>
                         </tr>
                          <tr>
-                            <td className="py-1">Lembur {payslip.payroll.overtimeHours ? `(${payslip.payroll.overtimeHours} jam)` : ''}</td>
+                            <td className="py-1">Lembur {payslip.payroll?.overtimeHours ? `(${payslip.payroll.overtimeHours} jam)` : ''}</td>
                             <td className="text-right font-medium">{formatCurrency(payslip.overtimePay)}</td>
                         </tr>
                         <tr>
@@ -119,7 +137,7 @@ export default function PayslipDetail({ payslip, isAdmin, onDelete }: PayslipDet
                         </tr>
                         <tr className="border-t border-gray-300 font-bold mt-2">
                             <td className="pt-2">Total Penghasilan Kotor</td>
-                            <td className="text-right pt-2">{formatCurrency(payslip.totalGross)}</td>
+                            <td className="text-right pt-2">{formatCurrency(totalGross)}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -138,7 +156,7 @@ export default function PayslipDetail({ payslip, isAdmin, onDelete }: PayslipDet
                         ))}
                          <tr className="border-t border-gray-300 font-bold mt-2">
                             <td className="pt-2">Total Potongan</td>
-                            <td className="text-right pt-2 text-red-600">({formatCurrency(payslip.totalDeductions)})</td>
+                            <td className="text-right pt-2 text-red-600">({formatCurrency(totalDeductions)})</td>
                         </tr>
                     </tbody>
                 </table>
@@ -177,21 +195,21 @@ export default function PayslipDetail({ payslip, isAdmin, onDelete }: PayslipDet
                              </div>
                              <div className="flex justify-between">
                                 <span className="text-gray-500">Penghasilan Bruto setahun</span>
-                                <span>{formatCurrency(payslip.taxCalculationDetails.annualGross)}</span>
+                                <span>{formatCurrency((payslip.taxCalculationDetails as any).annualGrossSalary || payslip.taxCalculationDetails.annualGross || 0)}</span>
                              </div>
                              <div className="flex justify-between">
                                 <span className="text-gray-500">Pengurang (Biaya Jabatan + BPJS)</span>
-                                <span>{formatCurrency(payslip.taxCalculationDetails.annualBpjs)}</span>
+                                <span>{formatCurrency((payslip.taxCalculationDetails as any).annualBpjs || 0)}</span>
                              </div>
                              <div className="flex justify-between border-t border-gray-200 pt-1 font-medium bg-yellow-50 px-2 rounded">
                                 <span>Penghasilan Kena Pajak (PKP)</span>
-                                <span>{formatCurrency(payslip.taxCalculationDetails.annualTaxableIncome)}</span>
+                                <span>{formatCurrency((payslip.taxCalculationDetails as any).taxableIncome || payslip.taxCalculationDetails.annualTaxableIncome || 0)}</span>
                              </div>
                              <div></div>
 
                              <div className="col-span-2 mt-2">
                                 <p className="text-xs text-gray-400 mb-1">Rincian Lapisan Tarif Pajak:</p>
-                                {payslip.taxCalculationDetails.taxBreakdown.map((bracket, idx) => (
+                                {payslip.taxCalculationDetails?.taxBreakdown?.map((bracket, idx) => (
                                     <div key={idx} className="flex justify-between text-xs text-gray-600 ml-4">
                                         <span>• Lapisan {bracket.bracket} ({bracket.rate * 100}%)</span>
                                         <span>{formatCurrency(bracket.amount)}</span>
@@ -212,7 +230,7 @@ export default function PayslipDetail({ payslip, isAdmin, onDelete }: PayslipDet
                     <span>Kontribusi Perusahaan (Benefit bukan Tunai)</span>
                     {isCompanyDetailsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                 </button>
-                <div className={`${isCompanyDetailsOpen ? 'block' : 'hidden'} print:block px-4 py-3 text-sm`}>
+                 <div className={`${isCompanyDetailsOpen ? 'block' : 'hidden'} print:block px-4 py-3 text-sm`}>
                      <table className="w-full">
                         <tbody>
                             <tr>
@@ -221,12 +239,11 @@ export default function PayslipDetail({ payslip, isAdmin, onDelete }: PayslipDet
                             </tr>
                             <tr>
                                 <td className="py-1 text-gray-500">BPJS Ketenagakerjaan (JHT 3.7%)</td>
-                                <td className="text-right">{formatCurrency(payslip.payroll.baseSalary ? parseFloat(payslip.payroll.baseSalary) * 0.037 : 0)}</td> 
-                                {/* Note: Exact breakdown might need to come from API if not strictly 3.7% of base, but estimate ok */}
+                                <td className="text-right">{formatCurrency(payslip.grossSalary ? parseFloat(payslip.grossSalary) * 0.037 : 0)}</td>
                             </tr>
                             <tr>
                                 <td className="py-1 text-gray-500">BPJS Ketenagakerjaan (Lainnya)</td>
-                                <td className="text-right">{formatCurrency(parseFloat(payslip.bpjsKetenagakerjaanCompany) - (parseFloat(payslip.payroll.baseSalary) * 0.037))}</td>
+                                <td className="text-right">{formatCurrency(Math.max(0, parseFloat(payslip.bpjsKetenagakerjaanCompany) - (parseFloat(payslip.grossSalary || '0') * 0.037)))}</td>
                             </tr>
                              <tr className="border-t border-gray-200 font-medium">
                                 <td className="pt-2">Total Contribution</td>
@@ -242,7 +259,7 @@ export default function PayslipDetail({ payslip, isAdmin, onDelete }: PayslipDet
         <div className="hidden print:flex mt-12 justify-between px-12 text-center text-sm">
              <div>
                 <p className="mb-16">Diterima Ole,</p>
-                <p className="font-bold underline">{payslip.payroll.employee?.firstName} {payslip.payroll.employee?.lastName}</p>
+                <p className="font-bold underline">{payslip.payroll?.employee?.firstName || '-'} {payslip.payroll?.employee?.lastName || ''}</p>
                 <p>Employee</p>
              </div>
              <div>

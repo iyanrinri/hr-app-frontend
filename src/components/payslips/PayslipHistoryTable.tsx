@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { Payslip } from '@/types/payslip';
 import { formatCurrency } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
@@ -13,6 +14,9 @@ interface PayslipHistoryTableProps {
 }
 
 export default function PayslipHistoryTable({ payslips, isLoading }: PayslipHistoryTableProps) {
+  const params = useParams();
+  const tenantSlug = params?.tenant_slug as string;
+  
   if (isLoading) {
     return (
       <div className="space-y-4">
@@ -64,45 +68,63 @@ export default function PayslipHistoryTable({ payslips, isLoading }: PayslipHist
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
-          {payslips.map((payslip) => (
-            <tr key={payslip.id} className="hover:bg-gray-50 transition-colors">
-              <td className="px-6 py-4 whitespace-nowrap">
-                <div className="text-sm font-medium text-gray-900">
-                    {new Date(payslip.payroll.periodStart).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })}
-                </div>
-                <div className="text-xs text-gray-500">
+          {payslips.map((payslip) => {
+            // Calculate additions (bonuses + overtime + allowances)
+            const baseSalary = parseFloat(payslip.grossSalary || '0');
+            const overtimePay = parseFloat(payslip.overtimePay || '0');
+            const bonuses = parseFloat(payslip.bonuses || '0');
+            const allowances = parseFloat(payslip.allowances || '0');
+            const additions = overtimePay + bonuses + allowances;
+            
+            return (
+              <tr key={payslip.id} className="hover:bg-gray-50 transition-colors">
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="text-sm font-medium text-gray-900">
+                    {payslip.payroll?.periodStart 
+                      ? new Date(payslip.payroll.periodStart).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })
+                      : 'N/A'
+                    }
+                  </div>
+                  <div className="text-xs text-gray-500">
                     Gen: {new Date(payslip.generatedAt).toLocaleDateString()}
-                </div>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                 <div className="text-sm font-medium text-gray-900">
-                    {payslip.payroll.employee?.firstName} {payslip.payroll.employee?.lastName}
-                 </div>
-                 <div className="text-xs text-gray-500">
-                    {payslip.payroll.employee?.position}
-                 </div>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-500">
-                {formatCurrency(payslip.payroll.baseSalary)}
-              </td>
-               <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-green-600">
-                +{formatCurrency((parseFloat(payslip.totalGross) - parseFloat(payslip.payroll.baseSalary)).toString())}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-red-600">
-                -{formatCurrency(payslip.totalDeductions)}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-brand-navy">
-                {formatCurrency(payslip.takeHomePay)}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                <Link href={`/dashboard/payslips/${payslip.id}`}>
+                  </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {payslip.payroll?.employee ? (
+                    <>
+                      <div className="text-sm font-medium text-gray-900">
+                        {payslip.payroll.employee.firstName} {payslip.payroll.employee.lastName}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        {payslip.payroll.employee.position}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="text-sm text-gray-500">-</div>
+                  )}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-500">
+                  {formatCurrency(baseSalary.toString())}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-green-600">
+                  +{formatCurrency(additions.toString())}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-red-600">
+                  -{formatCurrency(payslip.totalDeductions)}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-brand-navy">
+                  {formatCurrency(payslip.takeHomePay)}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                  <Link href={`/${tenantSlug}/dashboard/payslips/${payslip.id}`}>
                     <Button variant="ghost" title="View Detail">
-                        <Eye className="w-4 h-4 text-gray-500 hover:text-brand-navy" />
+                      <Eye className="w-4 h-4 text-gray-500 hover:text-brand-navy" />
                     </Button>
-                </Link>
-              </td>
-            </tr>
-          ))}
+                  </Link>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>

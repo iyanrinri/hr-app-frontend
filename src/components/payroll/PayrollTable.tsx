@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Payroll, PayrollStatus } from '@/types/payroll';
 import { Button } from '@/components/ui/Button';
 import PayrollStatusBadge from './PayrollStatusBadge';
-import { Eye, CheckCircle, DollarSign, Trash2, Calendar } from 'lucide-react';
+import { Eye, CheckCircle, DollarSign, Trash2, Calendar, FileText } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { formatCurrency } from '@/lib/utils'; // Assuming this exists, if not I will check utils.ts
+import { formatCurrency } from '@/lib/utils';
+import { PayslipService } from '@/services/payslip.service'; // Assuming this exists, if not I will check utils.ts
 
 interface PayrollTableProps {
   payrolls: Payroll[];
@@ -13,6 +14,7 @@ interface PayrollTableProps {
   onProcess?: (id: string) => void;
   onMarkPaid?: (id: string) => void;
   onDelete?: (id: string) => void;
+  onGeneratePayslip?: (id: string) => void;
   isAdmin?: boolean;
 }
 
@@ -22,10 +24,48 @@ export default function PayrollTable({
   onProcess, 
   onMarkPaid, 
   onDelete,
+  onGeneratePayslip,
   isAdmin = false 
 }: PayrollTableProps) {
   const params = useParams();
   const tenantSlug = params?.tenant_slug as string;
+  
+  // Track which payrolls have payslips
+  const [payslipStatus, setPayslipStatus] = useState<Record<string, 'loading' | 'exists' | 'not_exists'>>({});
+  
+  // Check payslip existence for PAID payrolls
+  useEffect(() => {
+    const checkPayslips = async () => {
+      const paidPayrolls = payrolls.filter(p => {
+        const actualStatus = p.status || 
+          (p.isPaid ? PayrollStatus.PAID : 
+           p.processedAt ? PayrollStatus.PROCESSED : 
+           PayrollStatus.PENDING);
+        return actualStatus === PayrollStatus.PAID;
+      });
+
+      for (const payroll of paidPayrolls) {
+        if (payslipStatus[payroll.id]) continue; // Already checked
+        
+        setPayslipStatus(prev => ({ ...prev, [payroll.id]: 'loading' }));
+        
+        try {
+          await PayslipService.getPayslipByPayrollId(payroll.id);
+          setPayslipStatus(prev => ({ ...prev, [payroll.id]: 'exists' }));
+        } catch (error: any) {
+          if (error?.response?.status === 404) {
+            setPayslipStatus(prev => ({ ...prev, [payroll.id]: 'not_exists' }));
+          } else {
+            setPayslipStatus(prev => ({ ...prev, [payroll.id]: 'not_exists' }));
+          }
+        }
+      }
+    };
+
+    if (payrolls.length > 0) {
+      checkPayslips();
+    }
+  }, [payrolls]);
   
   if (isLoading) {
     return (
@@ -80,6 +120,12 @@ export default function PayrollTable({
             const startDate = new Date(payroll.periodStart).toLocaleDateString();
             const endDate = new Date(payroll.periodEnd).toLocaleDateString();
             
+            // Determine actual status based on backend fields
+            const actualStatus = payroll.status || 
+              (payroll.isPaid ? PayrollStatus.PAID : 
+               payroll.processedAt ? PayrollStatus.PROCESSED : 
+               PayrollStatus.PENDING);
+            
             return (
               <tr key={payroll.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap">
@@ -106,7 +152,7 @@ export default function PayrollTable({
                   {formatCurrency(Number(payroll.netSalary))}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <PayrollStatusBadge status={payroll.status || (payroll.isPaid ? 'PAID' : 'PENDING')} />
+                  <PayrollStatusBadge status={actualStatus} />
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <div className="flex justify-end space-x-2">
@@ -118,7 +164,7 @@ export default function PayrollTable({
                     
                     {isAdmin && (
                       <>
-                        {payroll.status === PayrollStatus.PENDING && onProcess && (
+                        {actualStatus === PayrollStatus.PENDING && onProcess && (
                           <Button 
                             variant="secondary" 
                             className="p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
@@ -129,7 +175,7 @@ export default function PayrollTable({
                           </Button>
                         )}
                         
-                        {payroll.status === PayrollStatus.PROCESSED && onMarkPaid && (
+                        {actualStatus === PayrollStatus.PROCESSED && onMarkPaid && (
                           <Button 
                             variant="secondary" 
                             className="p-2 text-green-600 hover:text-green-700 hover:bg-green-50"
@@ -140,7 +186,7 @@ export default function PayrollTable({
                           </Button>
                         )}
 
-                        {payroll.status !== PayrollStatus.PAID && onDelete && (
+                        {actualStatus !== PayrollStatus.PAID && onDelete && (
                           <Button 
                             variant="danger" 
                             className="p-2"
@@ -149,6 +195,45 @@ export default function PayrollTable({
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
+                        )}
+                        
+                        {/* Generate Payslip button for PAID payrolls */}
+                        {actualStatus === PayrollStatus.PAID && onGeneratePayslip && (
+                          <>
+                            {payslipStatus[payroll.id] === 'not_exists' && (
+                              <Button 
+                                variant="secondary" 
+                                className="p-2 text-purple-600 hover:text-purple-700 hover:bg-purple-50"
+                                onClick={() => onGeneratePayslip(payroll.id)}
+                                title="Generate Payslip"
+                              >
+                                <FileText className="w-4 h-4" />
+                              </Button>
+                            )}
+                            
+                            {payslipStatus[payroll.id] === 'exists' && (
+                              <Link href={`/${tenantSlug}/dashboard/payslips?payrollId=${payroll.id}`} passHref>
+                                <Button 
+                                  variant="secondary" 
+                                  className="p-2 text-green-600 hover:text-green-700 hover:bg-green-50"
+                                  title="View Payslip"
+                                >
+                                  <FileText className="w-4 h-4" />
+                                </Button>
+                              </Link>
+                            )}
+                            
+                            {payslipStatus[payroll.id] === 'loading' && (
+                              <Button 
+                                variant="secondary" 
+                                className="p-2 opacity-50 cursor-not-allowed"
+                                disabled
+                                title="Checking payslip..."
+                              >
+                                <FileText className="w-4 h-4 animate-pulse" />
+                              </Button>
+                            )}
+                          </>
                         )}
                       </>
                     )}
