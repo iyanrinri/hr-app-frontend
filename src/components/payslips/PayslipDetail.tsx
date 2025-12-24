@@ -37,7 +37,27 @@ export default function PayslipDetail({ payslip, isAdmin, onDelete }: PayslipDet
   };
 
   return (
-    <div className="bg-white shadow-lg rounded-lg overflow-hidden max-w-4xl mx-auto print:shadow-none print:max-w-none">
+    <>
+      {/* Print-specific styles to hide everything except payslip */}
+      <style jsx global>{`
+        @media print {
+          body * {
+            visibility: hidden;
+          }
+          #payslip-content,
+          #payslip-content * {
+            visibility: visible;
+          }
+          #payslip-content {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+          }
+        }
+      `}</style>
+      
+      <div id="payslip-content" className="bg-white shadow-lg rounded-lg overflow-hidden max-w-4xl mx-auto print:shadow-none print:max-w-none">
       {/* Header Actions */}
       <div className="bg-gray-50 px-6 py-4 flex justify-between items-center border-b border-gray-200 print:hidden">
         <h1 className="text-xl font-bold text-gray-800">Payslip Detail</h1>
@@ -270,5 +290,6 @@ export default function PayslipDetail({ payslip, isAdmin, onDelete }: PayslipDet
         </div>
       </div>
     </div>
+    </>
   );
 }
