@@ -76,6 +76,14 @@ export default function PayslipHistoryTable({ payslips, isLoading }: PayslipHist
             const allowances = parseFloat(payslip.allowances || '0');
             const additions = overtimePay + bonuses + allowances;
             
+            // Calculate totalDeductions if not provided
+            const totalDeductions = payslip.totalDeductions ||
+              payslip.deductions?.reduce((sum, d) => sum + parseFloat(d.amount.toString() || '0'), 0).toString() ||
+              (parseFloat(payslip.taxAmount || '0') + 
+               parseFloat(payslip.bpjsKesehatanEmployee || '0') + 
+               parseFloat(payslip.bpjsKetenagakerjaanEmployee || '0') + 
+               parseFloat(payslip.otherDeductions || '0')).toString();
+            
             return (
               <tr key={payslip.id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-6 py-4 whitespace-nowrap">
@@ -110,7 +118,7 @@ export default function PayslipHistoryTable({ payslips, isLoading }: PayslipHist
                   +{formatCurrency(additions.toString())}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-red-600">
-                  -{formatCurrency(payslip.totalDeductions)}
+                  -{formatCurrency(totalDeductions)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-brand-navy">
                   {formatCurrency(payslip.takeHomePay)}
