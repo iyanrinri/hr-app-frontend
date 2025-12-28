@@ -43,14 +43,20 @@ api.interceptors.request.use((config) => {
   }
 
   // Inject tenant_slug from URL if available
-  if (typeof window !== 'undefined') {
+  // Skip tenant slug injection for certain endpoints that don't need it
+  const skipTenantSlugEndpoints = ['/tenant/register', '/tenant/logout'];
+  const shouldSkipTenantSlug = skipTenantSlugEndpoints.some(endpoint => 
+    config.url?.includes(endpoint)
+  );
+
+  if (typeof window !== 'undefined' && !shouldSkipTenantSlug) {
     const pathParts = window.location.pathname.split('/');
     // Assumes URL structure: /:tenant_slug/...
     // pathParts[0] is empty string, pathParts[1] is tenant_slug
     const tenantSlug = pathParts[1];
     
     // Check if we have a valid slug (not an empty string and not a system route like 'api' if avoided)
-    if (tenantSlug && tenantSlug !== 'auth' && tenantSlug !== 'dashboard' && tenantSlug !== 'api') {
+    if (tenantSlug && tenantSlug !== 'auth' && tenantSlug !== 'dashboard' && tenantSlug !== 'api' && tenantSlug !== 'register' && tenantSlug !== 'find-workspace') {
       // If baseURL is '/api', we want to append slug after it, or insert it. 
       // User requirement: {tenant_slug}/{api_path}
       // If config.url is '/payroll', and we want '/api/{tenant_slug}/payroll', 

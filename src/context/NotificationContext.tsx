@@ -64,7 +64,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     }
 
     // Connect to WebSocket - FIXED: Use /attendance namespace
-    const socketInstance = io('http://localhost:3000/attendance', {
+    const socketInstance = io(`${process.env.NEXT_PUBLIC_SOCKET_URL}/attendance`, {
       auth: {
         token: `Bearer ${token}`
       },
@@ -72,6 +72,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       reconnectionAttempts: 5,
       reconnectionDelay: 1000
     });
+
 
     socketInstance.on('connect_error', (error) => {
       console.error('❌ [WebSocket] Connection Error:', error);
@@ -81,8 +82,8 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       console.log('✅ Connected to attendance WebSocket');
       setIsConnected(true);
       
-      // FIXED: Emit join-tenant event to join the tenant room
-      socketInstance.emit('join-tenant', { tenantSlug });
+      // FIXED: Emit join_tenant event to join the tenant room
+      socketInstance.emit('join_tenant', { tenantSlug });
       console.log('🏢 Joined tenant room:', tenantSlug);
     });
 
@@ -91,9 +92,9 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       setIsConnected(false);
     });
 
-    // FIXED: Listen to attendance.dashboard-update event
+    // FIXED: Listen to attendance.dashboard_update event
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    socketInstance.on('attendance.dashboard-update', (data: any) => {
+    socketInstance.on('attendance.dashboard_update', (data: any) => {
       console.log('� [ATTENDANCE.DASHBOARD-UPDATE] Received:', {
         timestamp: new Date().toISOString(),
         data: data

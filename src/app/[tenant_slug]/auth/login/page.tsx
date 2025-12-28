@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useLogin } from '@/hooks/useAuth';
-import { useParams } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import Link from 'next/link';
@@ -19,8 +18,6 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const { mutate: login, isPending } = useLogin();
-  const params = useParams();
-  const tenantSlug = params?.tenant_slug as string;
   
   const {
     register,
@@ -156,15 +153,8 @@ export default function LoginPage() {
                 <div className="w-full border-t border-gray-200"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                <span className="px-2 bg-white text-gray-500">Secure login</span>
               </div>
-            </div>
-
-            <div className="mt-6 text-center text-sm">
-               <span className="text-gray-500">Don&apos;t have an account? </span>
-               <Link href={tenantSlug ? `/${tenantSlug}/auth/register` : '/auth/register'} className="font-semibold text-brand-navy hover:text-brand-cyan transition-colors">
-                 Create an account
-               </Link>
             </div>
           </form>
 

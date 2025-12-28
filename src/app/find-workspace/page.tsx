@@ -162,8 +162,8 @@ export default function FindWorkspacePage() {
 
             <div className="mt-6 text-center text-sm">
                 <span className="text-gray-500">Don&apos;t have a workspace? </span>
-                <Link href="#" className="font-semibold text-brand-navy hover:text-brand-cyan transition-colors">
-                  Contact Sales
+                <Link href="/register" className="font-semibold text-brand-navy hover:text-brand-cyan transition-colors">
+                  Create new workspace
                 </Link>
             </div>
           </form>
