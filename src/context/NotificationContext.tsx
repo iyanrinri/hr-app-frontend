@@ -82,14 +82,20 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       console.log('✅ Connected to attendance WebSocket');
       setIsConnected(true);
       
-      // FIXED: Emit join_tenant event to join the tenant room
-      socketInstance.emit('join_tenant', { tenantSlug });
-      console.log('🏢 Joined tenant room:', tenantSlug);
+      // FIXED: Emit join-tenant event to join the tenant room (matches backend)
+      socketInstance.emit('join-tenant', { tenantSlug });
+      console.log('🏢 Emitting join-tenant for:', tenantSlug);
     });
 
     socketInstance.on('disconnect', () => {
       console.log('❌ Disconnected from attendance WebSocket');
       setIsConnected(false);
+    });
+
+    // Listen for successful room join confirmation
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    socketInstance.on('joined', (data: any) => {
+      console.log('✅ Successfully joined tenant room:', data);
     });
 
     // FIXED: Listen to attendance.dashboard_update event
