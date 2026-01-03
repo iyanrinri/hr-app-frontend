@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_SOCKET_URL: process.env.NEXT_PUBLIC_SOCKET_URL || 'https://hr-backend.bromn.biz.id',
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'https://hr-backend.bromn.biz.id',
   },
+
   async rewrites() {
     return [
       {
@@ -14,14 +15,6 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  webpack: (config, { dev }) => {
-    if (!dev) {
-      config.optimization.minimize = false;
-    }
-    return config;
-  },
 };
 
 export default nextConfig;
-
-
