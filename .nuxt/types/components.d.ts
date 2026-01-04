@@ -14,8 +14,35 @@ type HydrationStrategies = {
 type LazyComponent<T> = DefineComponent<HydrationStrategies, {}, {}, {}, {}, {}, {}, { hydrated: () => void }> & T
 
 interface _GlobalComponents {
+  'AttendanceHistory': typeof import("../../components/attendance/AttendanceHistory.vue").default
+  'AttendanceDigitalClock': typeof import("../../components/attendance/DigitalClock.vue").default
+  'AttendanceEmployeeSelector': typeof import("../../components/attendance/EmployeeSelector.vue").default
+  'EmployeesEmployeeSalaryAdjustmentHistory': typeof import("../../components/employees/EmployeeSalaryAdjustmentHistory.vue").default
+  'EmployeesHierarchyManager': typeof import("../../components/employees/HierarchyManager.vue").default
+  'EmployeesNodeCard': typeof import("../../components/employees/NodeCard.vue").default
+  'EmployeesOrgChart': typeof import("../../components/employees/OrgChart.vue").default
+  'EmployeesSubordinateManager': typeof import("../../components/employees/SubordinateManager.vue").default
+  'LayoutSidebar': typeof import("../../components/layout/Sidebar.vue").default
+  'LayoutTopBar': typeof import("../../components/layout/TopBar.vue").default
+  'NotificationsNotificationPermissionButton': typeof import("../../components/notifications/NotificationPermissionButton.vue").default
+  'ProfileInfoItem': typeof import("../../components/profile/InfoItem.vue").default
+  'ProfileForm': typeof import("../../components/profile/ProfileForm.vue").default
+  'ProfilePictureUpload': typeof import("../../components/profile/ProfilePictureUpload.vue").default
+  'ProfileView': typeof import("../../components/profile/ProfileView.vue").default
+  'TablesEmployeeTable': typeof import("../../components/tables/EmployeeTable.vue").default
+  'UiAlert': typeof import("../../components/ui/Alert.vue").default
+  'UiAvatar': typeof import("../../components/ui/Avatar.vue").default
+  'UiBadge': typeof import("../../components/ui/Badge.vue").default
   'UiButton': typeof import("../../components/ui/Button.vue").default
+  'UiCard': typeof import("../../components/ui/Card.vue").default
+  'UiCardContent': typeof import("../../components/ui/CardContent.vue").default
+  'UiCardHeader': typeof import("../../components/ui/CardHeader.vue").default
+  'UiCardTitle': typeof import("../../components/ui/CardTitle.vue").default
+  'UiDialog': typeof import("../../components/ui/Dialog.vue").default
+  'UiDropdown': typeof import("../../components/ui/Dropdown.vue").default
   'UiInput': typeof import("../../components/ui/Input.vue").default
+  'UiSelect': typeof import("../../components/ui/Select.vue").default
+  'UiTextarea': typeof import("../../components/ui/Textarea.vue").default
   'NuxtWelcome': typeof import("../../node_modules/nuxt/dist/app/components/welcome.vue").default
   'NuxtLayout': typeof import("../../node_modules/nuxt/dist/app/components/nuxt-layout").default
   'NuxtErrorBoundary': typeof import("../../node_modules/nuxt/dist/app/components/nuxt-error-boundary.vue").default
@@ -39,8 +66,35 @@ interface _GlobalComponents {
   'Html': typeof import("../../node_modules/nuxt/dist/head/runtime/components").Html
   'Body': typeof import("../../node_modules/nuxt/dist/head/runtime/components").Body
   'NuxtIsland': typeof import("../../node_modules/nuxt/dist/app/components/nuxt-island").default
+  'LazyAttendanceHistory': LazyComponent<typeof import("../../components/attendance/AttendanceHistory.vue").default>
+  'LazyAttendanceDigitalClock': LazyComponent<typeof import("../../components/attendance/DigitalClock.vue").default>
+  'LazyAttendanceEmployeeSelector': LazyComponent<typeof import("../../components/attendance/EmployeeSelector.vue").default>
+  'LazyEmployeesEmployeeSalaryAdjustmentHistory': LazyComponent<typeof import("../../components/employees/EmployeeSalaryAdjustmentHistory.vue").default>
+  'LazyEmployeesHierarchyManager': LazyComponent<typeof import("../../components/employees/HierarchyManager.vue").default>
+  'LazyEmployeesNodeCard': LazyComponent<typeof import("../../components/employees/NodeCard.vue").default>
+  'LazyEmployeesOrgChart': LazyComponent<typeof import("../../components/employees/OrgChart.vue").default>
+  'LazyEmployeesSubordinateManager': LazyComponent<typeof import("../../components/employees/SubordinateManager.vue").default>
+  'LazyLayoutSidebar': LazyComponent<typeof import("../../components/layout/Sidebar.vue").default>
+  'LazyLayoutTopBar': LazyComponent<typeof import("../../components/layout/TopBar.vue").default>
+  'LazyNotificationsNotificationPermissionButton': LazyComponent<typeof import("../../components/notifications/NotificationPermissionButton.vue").default>
+  'LazyProfileInfoItem': LazyComponent<typeof import("../../components/profile/InfoItem.vue").default>
+  'LazyProfileForm': LazyComponent<typeof import("../../components/profile/ProfileForm.vue").default>
+  'LazyProfilePictureUpload': LazyComponent<typeof import("../../components/profile/ProfilePictureUpload.vue").default>
+  'LazyProfileView': LazyComponent<typeof import("../../components/profile/ProfileView.vue").default>
+  'LazyTablesEmployeeTable': LazyComponent<typeof import("../../components/tables/EmployeeTable.vue").default>
+  'LazyUiAlert': LazyComponent<typeof import("../../components/ui/Alert.vue").default>
+  'LazyUiAvatar': LazyComponent<typeof import("../../components/ui/Avatar.vue").default>
+  'LazyUiBadge': LazyComponent<typeof import("../../components/ui/Badge.vue").default>
   'LazyUiButton': LazyComponent<typeof import("../../components/ui/Button.vue").default>
+  'LazyUiCard': LazyComponent<typeof import("../../components/ui/Card.vue").default>
+  'LazyUiCardContent': LazyComponent<typeof import("../../components/ui/CardContent.vue").default>
+  'LazyUiCardHeader': LazyComponent<typeof import("../../components/ui/CardHeader.vue").default>
+  'LazyUiCardTitle': LazyComponent<typeof import("../../components/ui/CardTitle.vue").default>
+  'LazyUiDialog': LazyComponent<typeof import("../../components/ui/Dialog.vue").default>
+  'LazyUiDropdown': LazyComponent<typeof import("../../components/ui/Dropdown.vue").default>
   'LazyUiInput': LazyComponent<typeof import("../../components/ui/Input.vue").default>
+  'LazyUiSelect': LazyComponent<typeof import("../../components/ui/Select.vue").default>
+  'LazyUiTextarea': LazyComponent<typeof import("../../components/ui/Textarea.vue").default>
   'LazyNuxtWelcome': LazyComponent<typeof import("../../node_modules/nuxt/dist/app/components/welcome.vue").default>
   'LazyNuxtLayout': LazyComponent<typeof import("../../node_modules/nuxt/dist/app/components/nuxt-layout").default>
   'LazyNuxtErrorBoundary': LazyComponent<typeof import("../../node_modules/nuxt/dist/app/components/nuxt-error-boundary.vue").default>

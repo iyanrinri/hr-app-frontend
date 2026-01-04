@@ -20,7 +20,12 @@ export const useAuth = () => {
         try {
             // Using a simple fetch wrapper or axios
             // We need to implement the API service first, but for now assuming direct call logic
-            const response = await $fetch<LoginResponse>('/api/auth/login', {
+            // Construct URL with tenant_slug if available
+            const url = tenantSlug 
+                ? `/api/${tenantSlug}/auth/login` 
+                : '/api/auth/login'
+
+            const response = await $fetch<LoginResponse>(url, {
                 method: 'POST',
                 body: payload,
                 // Nuxt proxy will handle /api -> backend

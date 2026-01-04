@@ -24,6 +24,33 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = null
   }
 
+  async function fetchProfile() {
+    if (!token.value) return
+
+    // Get tenant slug from route if available
+    const route = useRoute()
+    const tenantSlug = route.params.tenant_slug as string
+    
+    // Construct URL
+    const url = tenantSlug 
+      ? `/api/${tenantSlug}/auth/profile` 
+      : '/api/auth/profile'
+
+    try {
+      const response = await $fetch<User>(url, {
+        headers: {
+          Authorization: `Bearer ${token.value}`
+        }
+      })
+      if (response) {
+        user.value = response
+      }
+    } catch (error) {
+      console.error('Failed to fetch profile', error)
+      // Optional: clearAuth() if 401?
+    }
+  }
+
   // Getters are just computed properties or direct access in setup store
   const isAuthenticated = computed(() => !!token.value)
 
@@ -32,6 +59,7 @@ export const useAuthStore = defineStore('auth', () => {
     user,
     setAuth,
     clearAuth,
+    fetchProfile,
     isAuthenticated
   }
 })

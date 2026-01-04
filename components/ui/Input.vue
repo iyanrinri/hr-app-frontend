@@ -2,7 +2,7 @@
 import { cn } from "@/utils";
 
 interface Props {
-  modelValue?: string | number;
+  modelValue?: string | number | null;
   label?: string;
   error?: string;
   helperText?: string;

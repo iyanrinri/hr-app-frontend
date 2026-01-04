@@ -1,10 +1,23 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { z } from 'zod'
-import { Building2, Mail, Lock, User, Tag, ArrowRight, Quote, CheckCircle2, Users } from 'lucide-vue-next'
-import { useRegisterTenant } from '@/composables/useRegisterTenant'
+import { Building2, Mail, Lock, User, Tag, ArrowRight, Quote, CheckCircle2 } from 'lucide-vue-next'
 
-const { registerTenant, loading } = useRegisterTenant()
+// Nuxt auto-imports: navigateTo, $fetch
+
+const isPending = ref(false)
+const generalError = ref('')
+const errors = ref<Record<string, string>>({})
+
+const form = ref({
+  tenantName: '',
+  slug: '',
+  firstName: '',
+  lastName: '',
+  email: '',
+  password: '',
+  confirmPassword: ''
+})
 
 const registerSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -19,44 +32,60 @@ const registerSchema = z.object({
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ['confirmPassword'],
-});
-
-const form = ref({
-  email: '',
-  tenantName: '',
-  slug: '',
-  firstName: '',
-  lastName: '',
-  password: '',
-  confirmPassword: ''
 })
 
-const errors = ref<Record<string, string>>({})
-const generalError = ref('')
-
 const onSubmit = async () => {
+  // Clear errors
   errors.value = {}
   generalError.value = ''
 
+  // Validate
   const result = registerSchema.safeParse(form.value)
-  
   if (!result.success) {
-    const formatted = result.error.format()
-    // Map Zod errors to our simple key-value error object
-    Object.keys(formatted).forEach(key => {
-        if (key !== '_errors') {
-            // @ts-ignore
-             errors.value[key] = formatted[key]?._errors[0] || ''
-        }
+    const formattedErrors = result.error.format()
+    // Map Zod errors to simple key-value object
+    // Note: Zod format returns { key: { _errors: [] } }
+    Object.entries(formattedErrors).forEach(([key, value]) => {
+      if (key !== '_errors' && value && '_errors' in value) {
+          errors.value[key] = (value as { _errors: string[] })._errors[0] || ''
+      }
     })
     return
   }
 
+  isPending.value = true
+  
   try {
-     const { confirmPassword, ...payload } = form.value
-     await registerTenant(payload)
-  } catch (err: any) {
-     generalError.value = err.message
+    // Prepare payload (exclude confirmPassword)
+    const { confirmPassword, ...payload } = form.value
+    
+    const response = await $fetch<any>('/api/tenant/register', {
+        method: 'POST',
+        body: payload
+    })
+
+    // On success
+    // Response likely follows standard format { data: { user: ..., token: ... } } or similar
+    // React hook usage: const { user } = response.data; router.push(`/${user.tenantSlug}/auth/login`);
+    // $fetch returns the parsed JSON info directly.
+    const user = response.user || response.data?.user
+    
+    if (user && user.tenantSlug) {
+         await navigateTo(`/${user.tenantSlug}/auth/login`)
+    } else {
+        // Fallback or if structure differs
+        // Just redirect to find-workspace if we can't determine slug
+        await navigateTo('/find-workspace')
+    }
+
+  } catch (error: any) {
+    console.error(error)
+    // Handle error message
+    // Axios usually puts message in error.response.data.message
+    // Nuxt $fetch error: error.data?.message
+    generalError.value = error.data?.message || 'Registration failed. Please try again.'
+  } finally {
+    isPending.value = false
   }
 }
 </script>
@@ -65,56 +94,56 @@ const onSubmit = async () => {
   <div class="min-h-screen grid grid-cols-1 lg:grid-cols-2">
     <!-- Left Side - Branding (Hidden on mobile) -->
     <div class="hidden lg:flex flex-col justify-between bg-gradient-to-br from-brand-navy to-gray-900 p-12 text-white relative overflow-hidden">
-        <!-- Abstract Background Shapes -->
-        <div class="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-brand-cyan/20 rounded-full blur-3xl"></div>
-        <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl"></div>
+      <!-- Abstract Background Shapes -->
+      <div class="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-brand-cyan/20 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl"></div>
 
-        <!-- Header -->
-        <div class="relative z-10 flex items-center space-x-3">
-          <div class="w-10 h-10 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/20">
-            <Building2 class="w-6 h-6 text-brand-cyan" />
-          </div>
-          <span class="text-xl font-bold tracking-tight">HR Portal</span>
+      <!-- Header -->
+      <div class="relative z-10 flex items-center space-x-3">
+        <div class="w-10 h-10 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/20">
+          <Building2 class="w-6 h-6 text-brand-cyan" />
         </div>
+        <span class="text-xl font-bold tracking-tight">HR Portal</span>
+      </div>
 
-        <!-- Main Content -->
-        <div class="relative z-10 max-w-lg">
-          <h1 class="text-5xl font-extrabold tracking-tight mb-6 leading-tight">
-            Start managing your team <span class="text-brand-cyan">today</span>.
-          </h1>
-          <p class="text-lg text-gray-300 leading-relaxed mb-8">
-            Create your company workspace and get instant access to powerful HR management tools.
-          </p>
-          
-          <div class="space-y-4">
-            <div v-for="(feature, i) in [
-              'Complete employee management system',
-              'Attendance tracking & reporting',
-              'Leave & overtime management',
-              'Payroll & payslip generation',
-            ]" :key="i" class="flex items-center space-x-3">
-                <CheckCircle2 class="w-5 h-5 text-brand-cyan flex-shrink-0" />
-                <span class="text-gray-300">{{ feature }}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Footer/Testimonial -->
-        <div class="relative z-10 bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
-          <Quote class="w-8 h-8 text-brand-cyan/50 mb-4" />
-          <p class="text-gray-300 italic mb-4">
-            "Setting up our HR system was incredibly easy. We were up and running in minutes!"
-          </p>
-          <div class="flex items-center">
-             <div class="w-8 h-8 rounded-full bg-brand-cyan flex items-center justify-center text-brand-navy font-bold text-xs mr-3">
-               SM
-             </div>
-             <div>
-               <p class="text-sm font-bold text-white">Sarah Miller</p>
-               <p class="text-xs text-gray-400">CEO, TechStart</p>
-             </div>
+      <!-- Main Content -->
+      <div class="relative z-10 max-w-lg">
+        <h1 class="text-5xl font-extrabold tracking-tight mb-6 leading-tight">
+          Start managing your team <span class="text-brand-cyan">today</span>.
+        </h1>
+        <p class="text-lg text-gray-300 leading-relaxed mb-8">
+          Create your company workspace and get instant access to powerful HR management tools.
+        </p>
+        
+        <div class="space-y-4">
+          <div v-for="(feature, i) in [
+            'Complete employee management system',
+            'Attendance tracking & reporting',
+            'Leave & overtime management',
+            'Payroll & payslip generation',
+          ]" :key="i" class="flex items-center space-x-3">
+            <CheckCircle2 class="w-5 h-5 text-brand-cyan flex-shrink-0" />
+            <span class="text-gray-300">{{ feature }}</span>
           </div>
         </div>
+      </div>
+
+      <!-- Footer/Testimonial -->
+      <div class="relative z-10 bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
+        <Quote class="w-8 h-8 text-brand-cyan/50 mb-4" />
+        <p class="text-gray-300 italic mb-4">
+          "Setting up our HR system was incredibly easy. We were up and running in minutes!"
+        </p>
+        <div class="flex items-center">
+           <div class="w-8 h-8 rounded-full bg-brand-cyan flex items-center justify-center text-brand-navy font-bold text-xs mr-3">
+             SM
+           </div>
+           <div>
+             <p class="text-sm font-bold text-white">Sarah Miller</p>
+             <p class="text-xs text-gray-400">CEO, TechStart</p>
+           </div>
+        </div>
+      </div>
     </div>
 
     <!-- Right Side - Registration Form -->
@@ -135,7 +164,7 @@ const onSubmit = async () => {
         </div>
 
         <form @submit.prevent="onSubmit" class="mt-8 space-y-5 bg-white lg:bg-transparent p-8 lg:p-0 rounded-2xl lg:rounded-none shadow-xl lg:shadow-none shadow-gray-100/50">
-           
+          <!-- General Error Alert -->
           <div v-if="generalError" class="p-4 rounded-md bg-red-50 border border-red-200 text-sm text-red-600">
              {{ generalError }}
           </div>
@@ -163,8 +192,8 @@ const onSubmit = async () => {
               placeholder="acme_corp"
               v-model="form.slug"
               :error="errors.slug"
-              helperText="Used in your workspace URL (lowercase, numbers, underscores only)"
               class="bg-gray-50 border-gray-200 focus:bg-white transition-colors"
+              helperText="Used in your workspace URL (lowercase, numbers, underscores only)"
             >
                 <template #icon>
                     <Tag class="w-4 h-4 text-gray-400" />
@@ -200,7 +229,7 @@ const onSubmit = async () => {
               >
                   <template #icon>
                     <User class="w-4 h-4 text-gray-400" />
-                 </template>
+                </template>
               </UiInput>
             </div>
             
@@ -211,6 +240,7 @@ const onSubmit = async () => {
               v-model="form.email"
               :error="errors.email"
               class="bg-gray-50 border-gray-200 focus:bg-white transition-colors"
+              autocomplete="email"
             >
                 <template #icon>
                     <Mail class="w-4 h-4 text-gray-400" />
@@ -224,8 +254,9 @@ const onSubmit = async () => {
               v-model="form.password"
               :error="errors.password"
               class="bg-gray-50 border-gray-200 focus:bg-white transition-colors"
+               autocomplete="new-password"
             >
-                 <template #icon>
+                <template #icon>
                     <Lock class="w-4 h-4 text-gray-400" />
                 </template>
             </UiInput>
@@ -237,8 +268,9 @@ const onSubmit = async () => {
               v-model="form.confirmPassword"
               :error="errors.confirmPassword"
               class="bg-gray-50 border-gray-200 focus:bg-white transition-colors"
+               autocomplete="new-password"
             >
-                 <template #icon>
+                <template #icon>
                     <Lock class="w-4 h-4 text-gray-400" />
                 </template>
             </UiInput>
@@ -247,7 +279,7 @@ const onSubmit = async () => {
           <UiButton
             type="submit"
             class="w-full h-12 text-base font-semibold shadow-lg shadow-brand-navy/20 active:scale-[0.98] transition-all mt-6"
-            :is-loading="loading"
+            :is-loading="isPending"
           >
             Create Workspace <ArrowRight class="ml-2 w-4 h-4" />
           </UiButton>
