@@ -1,0 +1,1 @@
+export { default } from "file:///Users/iyan/NodeStudio/hr-app-frontend/node_modules/@nuxt/vite-builder/dist/runtime/client.manifest.mjs"

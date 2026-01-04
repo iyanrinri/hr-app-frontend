@@ -1,5 +1,4 @@
 # Multi-stage build for Next.js application
-# Multi-stage build for Next.js application
 FROM node:20-slim AS base
 
 # Install dependencies only when needed
