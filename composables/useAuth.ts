@@ -1,5 +1,5 @@
 import { useAuthStore } from '@/stores/auth'
-import type { LoginResponse, RegisterPayload, TenantRegisterPayload, TenantRegisterResponse } from '@/types/auth'
+import type { LoginResponse } from '@/types/auth'
 
 // In Nuxt, we can use useFetch or just plain $fetch. 
 // For better control matching your axiom setup, we can use a custom composable or $fetch with interceptors 
@@ -50,11 +50,27 @@ export const useAuth = () => {
         }
     }
 
-    const logout = () => {
+    const logout = async () => {
         const tenantSlug = route.params.tenant_slug as string
-        authStore.clearAuth()
-        const redirectPath = tenantSlug ? `/${tenantSlug}/auth/login` : '/auth/login'
-        return navigateTo(redirectPath)
+        
+        try {
+             const url = tenantSlug 
+                ? `/api/${tenantSlug}/auth/logout` 
+                : '/api/auth/logout'
+
+             // We attempt to call the backend logout
+             // We don't block heavily on this, but we try to execute it.
+             await $fetch(url, {
+                 method: 'POST'
+             })
+        } catch (error) {
+            console.error('Logout API call failed', error)
+            // We continue to client-side logout anyway
+        } finally {
+            authStore.clearAuth()
+            const redirectPath = tenantSlug ? `/${tenantSlug}/auth/login` : '/auth/login'
+            return navigateTo(redirectPath) 
+        }
     }
 
     return {

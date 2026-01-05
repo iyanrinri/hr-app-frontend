@@ -43,7 +43,7 @@ export const useEmployees = (
         key: 'employees',
         query: queryParams,
         watch: [queryParams],
-
+        server: false
     })
 
     return {
@@ -64,7 +64,7 @@ export const useAllEmployees = () => {
     const { data, pending, error, refresh } = useFetch<EmployeesResponse>(() => getUrl('/employees'), {
         key: 'all-employees',
         query: queryParams,
-
+        server: false
     })
 
     // Helper to get raw array since API might return { data: [...] } or just [...] depend on implementation
@@ -89,7 +89,7 @@ export const useEmployee = (id: MaybeRef<string>) => {
     const { data, pending, error, refresh } = useFetch<Employee>(() => getUrl(`/employees/${unref(id)}`), {
         key: `employee-${unref(id)}`,
         immediate: !!unref(id),
-
+        server: false
     })
 
     return {
@@ -263,7 +263,7 @@ export const useManagementChain = (id: MaybeRef<string>) => {
     const { data, pending, error, refresh } = useFetch<Employee[]>(() => getUrl(`/employees/${unref(id)}/management-chain`), {
         key: `employee-chain-${unref(id)}`,
         immediate: !!unref(id),
-
+        server: false
     })
 
     return {
@@ -281,7 +281,7 @@ export const useSubordinates = (id: MaybeRef<string>) => {
     const { data, pending, error, refresh } = useFetch<Employee[]>(() => getUrl(`/employees/${unref(id)}/subordinates`), {
         key: `employee-subordinates-${unref(id)}`,
         immediate: !!unref(id),
-
+        server: false
     })
 
     return {
@@ -299,7 +299,7 @@ export const useOrganizationTree = (id: MaybeRef<string>) => {
     const { data, pending, error, refresh } = useFetch<OrganizationTreeResponse>(() => getUrl(`/employees/${unref(id)}/organization-tree`), {
         key: `employee-tree-${unref(id)}`,
         immediate: !!unref(id),
-
+        server: false
     })
 
     return {

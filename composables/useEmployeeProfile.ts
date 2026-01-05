@@ -36,14 +36,14 @@ export const useUpdateMyProfile = () => {
 
   const loading = ref(false)
 
-  const mutate = async (data: UpdateProfilePayload) => {
+  const mutate = async (data: UpdateProfilePayload, options?: { onSuccess?: () => void }) => {
     loading.value = true
     try {
       const response = await $fetch<EmployeeProfile>(getUrl('/employees/profile/me'), {
         method: 'PATCH',
         body: data,
-
       })
+      if (options?.onSuccess) options.onSuccess()
       return response
     } catch (error) {
       throw error
@@ -83,14 +83,14 @@ export const useUpdateEmployeeProfile = () => {
 
   const loading = ref(false)
 
-  const mutate = async (id: string, data: UpdateProfilePayload) => {
+  const mutate = async (id: string, data: UpdateProfilePayload, options?: { onSuccess?: () => void }) => {
     loading.value = true
     try {
       const response = await $fetch<EmployeeProfile>(getUrl(`/employees/${id}/profile`), {
         method: 'PATCH',
         body: data,
-
       })
+      if (options?.onSuccess) options.onSuccess()
       return response
     } catch (error) {
       throw error
@@ -161,3 +161,55 @@ export const useDeleteEmployeePicture = () => {
       loading
     }
   }
+
+export const useUploadMyProfilePicture = () => {
+  const getUrl = useTenantUrl()
+
+  const loading = ref(false)
+
+  const mutate = async (file: File) => {
+    loading.value = true
+    const formData = new FormData()
+    formData.append('file', file)
+
+    try {
+      const response = await $fetch<{ url: string }>(getUrl('/employees/profile/me/picture'), {
+        method: 'POST',
+        body: formData,
+      })
+      return response
+    } catch (error) {
+      throw error
+    } finally {
+      loading.value = false
+    }
+  }
+
+  return {
+    mutate,
+    loading
+  }
+}
+
+export const useDeleteMyProfilePicture = () => {
+    const getUrl = useTenantUrl()
+    const loading = ref(false)
+  
+    const mutate = async () => {
+      loading.value = true
+      try {
+        await $fetch(getUrl('/employees/profile/me/picture'), {
+          method: 'DELETE',
+        })
+      } catch (error) {
+        throw error
+      } finally {
+        loading.value = false
+      }
+    }
+  
+    return {
+      mutate,
+      loading
+    }
+}

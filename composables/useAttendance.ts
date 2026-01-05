@@ -73,7 +73,7 @@ export const useTodayAttendance = () => {
   
   const { data, pending, error, refresh } = useFetch<Attendance>(() => getUrl('/attendance/today'), {
     key: 'attendance-today',
-
+    server: false
   })
   
   return {
@@ -100,7 +100,7 @@ export const useAttendanceStats = (
         employeeId
     },
     immediate: !!(unref(startDate) && unref(endDate)),
-
+    server: false
   })
   
   return {
@@ -154,7 +154,7 @@ export const useAttendanceHistory = (
     const { data, pending, refresh, error } = useFetch<AttendanceHistory>(() => getUrl('/attendance/history'), {
         key: 'attendance-history',
         query: queryParams,
-
+        server: false
     })
 
     return {
@@ -171,7 +171,7 @@ export const useTodayAttendanceDashboard = () => {
     
     const { data, pending, error, refresh } = useFetch<TodayAttendanceDashboard>(() => getUrl('/attendance/dashboard/today'), {
         key: 'attendance-dashboard-today',
-
+        server: false
     })
 
     return {

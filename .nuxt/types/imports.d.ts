@@ -101,9 +101,11 @@ declare global {
   const tryUseNuxtApp: typeof import('../../node_modules/nuxt/dist/app/nuxt').tryUseNuxtApp
   const unref: typeof import('vue').unref
   const updateAppConfig: typeof import('../../node_modules/nuxt/dist/app/config').updateAppConfig
+  const useActiveLeavePeriod: typeof import('../../composables/useLeaves').useActiveLeavePeriod
   const useActivePeriod: typeof import('../../composables/useAttendancePeriods').useActivePeriod
   const useAllEmployees: typeof import('../../composables/useEmployees').useAllEmployees
   const useAppConfig: typeof import('../../node_modules/nuxt/dist/app/config').useAppConfig
+  const useApproveLeaveRequest: typeof import('../../composables/useLeaves').useApproveLeaveRequest
   const useAssignManager: typeof import('../../composables/useEmployees').useAssignManager
   const useAssignSubordinates: typeof import('../../composables/useEmployees').useAssignSubordinates
   const useAsyncData: typeof import('../../node_modules/nuxt/dist/app/composables/asyncData').useAsyncData
@@ -114,45 +116,86 @@ declare global {
   const useAttrs: typeof import('vue').useAttrs
   const useAuth: typeof import('../../composables/useAuth').useAuth
   const useAuthStore: typeof import('../../stores/auth').useAuthStore
+  const useBulkGeneratePayroll: typeof import('../../composables/usePayroll').useBulkGeneratePayroll
+  const useCancelLeaveRequest: typeof import('../../composables/useLeaves').useCancelLeaveRequest
   const useClockIn: typeof import('../../composables/useAttendance').useClockIn
   const useClockOut: typeof import('../../composables/useAttendance').useClockOut
   const useCookie: typeof import('../../node_modules/nuxt/dist/app/composables/cookie').useCookie
   const useCreateAttendancePeriod: typeof import('../../composables/useAttendancePeriods').useCreateAttendancePeriod
   const useCreateEmployee: typeof import('../../composables/useEmployees').useCreateEmployee
   const useCreateHoliday: typeof import('../../composables/useHolidays').useCreateHoliday
+  const useCreateLeavePeriod: typeof import('../../composables/useLeaves').useCreateLeavePeriod
+  const useCreateLeaveRequest: typeof import('../../composables/useLeaves').useCreateLeaveRequest
+  const useCreateLeaveType: typeof import('../../composables/useLeaves').useCreateLeaveType
+  const useCreateOvertimeRequest: typeof import('../../composables/useOvertimeCRUD').useCreateOvertimeRequest
+  const useCreatePayroll: typeof import('../../composables/usePayroll').useCreatePayroll
   const useCssModule: typeof import('vue').useCssModule
   const useCssVars: typeof import('vue').useCssVars
   const useDeleteAttendancePeriod: typeof import('../../composables/useAttendancePeriods').useDeleteAttendancePeriod
   const useDeleteEmployee: typeof import('../../composables/useEmployees').useDeleteEmployee
   const useDeleteEmployeePicture: typeof import('../../composables/useEmployeeProfile').useDeleteEmployeePicture
   const useDeleteHoliday: typeof import('../../composables/useHolidays').useDeleteHoliday
+  const useDeleteLeavePeriod: typeof import('../../composables/useLeaves').useDeleteLeavePeriod
+  const useDeleteLeaveType: typeof import('../../composables/useLeaves').useDeleteLeaveType
+  const useDeleteMyProfilePicture: typeof import('../../composables/useEmployeeProfile').useDeleteMyProfilePicture
+  const useDeleteOvertimeRequest: typeof import('../../composables/useOvertimeCRUD').useDeleteOvertimeRequest
+  const useDeletePayslip: typeof import('../../composables/usePayslips').useDeletePayslip
   const useEmployee: typeof import('../../composables/useEmployees').useEmployee
+  const useEmployeeLeaveBalances: typeof import('../../composables/useLeaves').useEmployeeLeaveBalances
+  const useEmployeeOvertimeHistory: typeof import('../../composables/useOvertime').useEmployeeOvertimeHistory
   const useEmployeeProfile: typeof import('../../composables/useEmployeeProfile').useEmployeeProfile
   const useEmployeeSalaryHistory: typeof import('../../composables/useSalaries').useEmployeeSalaryHistory
+  const useEmployeeTotalHours: typeof import('../../composables/useOvertime').useEmployeeTotalHours
   const useEmployees: typeof import('../../composables/useEmployees').useEmployees
   const useError: typeof import('../../node_modules/nuxt/dist/app/composables/error').useError
   const useFetch: typeof import('../../node_modules/nuxt/dist/app/composables/fetch').useFetch
   const useFetchWithAuth: typeof import('../../composables/useFetchWithAuth').useFetchWithAuth
+  const useGeneratePayslip: typeof import('../../composables/usePayslips').useGeneratePayslip
   const useHead: typeof import('../../node_modules/nuxt/dist/app/composables/head').useHead
   const useHeadSafe: typeof import('../../node_modules/nuxt/dist/app/composables/head').useHeadSafe
   const useHolidays: typeof import('../../composables/useHolidays').useHolidays
   const useHydration: typeof import('../../node_modules/nuxt/dist/app/composables/hydrate').useHydration
   const useId: typeof import('vue').useId
+  const useInitializeSettings: typeof import('../../composables/useSettings').useInitializeSettings
   const useLazyAsyncData: typeof import('../../node_modules/nuxt/dist/app/composables/asyncData').useLazyAsyncData
   const useLazyFetch: typeof import('../../node_modules/nuxt/dist/app/composables/fetch').useLazyFetch
+  const useLeavePeriod: typeof import('../../composables/useLeaves').useLeavePeriod
+  const useLeavePeriods: typeof import('../../composables/useLeaves').useLeavePeriods
+  const useLeaveRequest: typeof import('../../composables/useLeaves').useLeaveRequest
+  const useLeaveTypes: typeof import('../../composables/useLeaves').useLeaveTypes
   const useLink: typeof import('vue-router').useLink
   const useLoadingIndicator: typeof import('../../node_modules/nuxt/dist/app/composables/loading-indicator').useLoadingIndicator
   const useManagementChain: typeof import('../../composables/useEmployees').useManagementChain
+  const useMarkPayrollPaid: typeof import('../../composables/usePayroll').useMarkPayrollPaid
   const useModel: typeof import('vue').useModel
+  const useMyLeaveBalances: typeof import('../../composables/useLeaves').useMyLeaveBalances
+  const useMyLeaveRequests: typeof import('../../composables/useLeaves').useMyLeaveRequests
+  const useMyPayrolls: typeof import('../../composables/usePayroll').useMyPayrolls
+  const useMyPayslips: typeof import('../../composables/usePayslips').useMyPayslips
   const useMyProfile: typeof import('../../composables/useEmployeeProfile').useMyProfile
   const useNotificationStore: typeof import('../../stores/notifications').useNotificationStore
   const useNuxtApp: typeof import('../../node_modules/nuxt/dist/app/nuxt').useNuxtApp
   const useNuxtData: typeof import('../../node_modules/nuxt/dist/app/composables/asyncData').useNuxtData
   const useNuxtDevTools: typeof import('../../node_modules/@nuxt/devtools/dist/runtime/use-nuxt-devtools').useNuxtDevTools
   const useOrganizationTree: typeof import('../../composables/useEmployees').useOrganizationTree
+  const useOvertimeApprovalStats: typeof import('../../composables/useOvertime').useOvertimeApprovalStats
+  const useOvertimeApprovals: typeof import('../../composables/useOvertime').useOvertimeApprovals
+  const useOvertimeRequestDetail: typeof import('../../composables/useOvertimeCRUD').useOvertimeRequestDetail
+  const useOvertimeRequests: typeof import('../../composables/useOvertimeCRUD').useOvertimeRequests
+  const usePayroll: typeof import('../../composables/usePayroll').usePayroll
+  const usePayrollSummary: typeof import('../../composables/usePayroll').usePayrollSummary
+  const usePayrolls: typeof import('../../composables/usePayroll').usePayrolls
+  const usePayslip: typeof import('../../composables/usePayslips').usePayslip
+  const usePayslipByPayroll: typeof import('../../composables/usePayslips').usePayslipByPayroll
+  const usePayslips: typeof import('../../composables/usePayslips').usePayslips
+  const usePendingApprovals: typeof import('../../composables/useLeaves').usePendingApprovals
+  const usePendingOvertimeApprovals: typeof import('../../composables/useOvertime').usePendingOvertimeApprovals
   const usePinia: typeof import('../../node_modules/@pinia/nuxt/dist/runtime/composables').usePinia
   const usePreviewMode: typeof import('../../node_modules/nuxt/dist/app/composables/preview').usePreviewMode
+  const useProcessOvertimeApproval: typeof import('../../composables/useOvertime').useProcessOvertimeApproval
+  const useProcessPayrolls: typeof import('../../composables/usePayroll').useProcessPayrolls
   const useRegisterTenant: typeof import('../../composables/useRegisterTenant').useRegisterTenant
+  const useRejectLeaveRequest: typeof import('../../composables/useLeaves').useRejectLeaveRequest
   const useRequestEvent: typeof import('../../node_modules/nuxt/dist/app/composables/ssr').useRequestEvent
   const useRequestFetch: typeof import('../../node_modules/nuxt/dist/app/composables/ssr').useRequestFetch
   const useRequestHeader: typeof import('../../node_modules/nuxt/dist/app/composables/ssr').useRequestHeader
@@ -199,6 +242,7 @@ declare global {
   const useServerHead: typeof import('../../node_modules/nuxt/dist/app/composables/head').useServerHead
   const useServerHeadSafe: typeof import('../../node_modules/nuxt/dist/app/composables/head').useServerHeadSafe
   const useServerSeoMeta: typeof import('../../node_modules/nuxt/dist/app/composables/head').useServerSeoMeta
+  const useSettings: typeof import('../../composables/useSettings').useSettings
   const useShadowRoot: typeof import('vue').useShadowRoot
   const useSlots: typeof import('vue').useSlots
   const useState: typeof import('../../node_modules/nuxt/dist/app/composables/state').useState
@@ -211,8 +255,13 @@ declare global {
   const useUpdateEmployee: typeof import('../../composables/useEmployees').useUpdateEmployee
   const useUpdateEmployeeProfile: typeof import('../../composables/useEmployeeProfile').useUpdateEmployeeProfile
   const useUpdateHoliday: typeof import('../../composables/useHolidays').useUpdateHoliday
+  const useUpdateLeavePeriod: typeof import('../../composables/useLeaves').useUpdateLeavePeriod
+  const useUpdateLeaveType: typeof import('../../composables/useLeaves').useUpdateLeaveType
   const useUpdateMyProfile: typeof import('../../composables/useEmployeeProfile').useUpdateMyProfile
+  const useUpdateOvertimeRequest: typeof import('../../composables/useOvertimeCRUD').useUpdateOvertimeRequest
+  const useUpdateSetting: typeof import('../../composables/useSettings').useUpdateSetting
   const useUploadEmployeePicture: typeof import('../../composables/useEmployeeProfile').useUploadEmployeePicture
+  const useUploadMyProfilePicture: typeof import('../../composables/useEmployeeProfile').useUploadMyProfilePicture
   const useWebSocket: typeof import('../../composables/useWebSocket').useWebSocket
   const watch: typeof import('vue').watch
   const watchEffect: typeof import('vue').watchEffect
@@ -338,9 +387,11 @@ declare module 'vue' {
     readonly tryUseNuxtApp: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/nuxt')['tryUseNuxtApp']>
     readonly unref: UnwrapRef<typeof import('vue')['unref']>
     readonly updateAppConfig: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/config')['updateAppConfig']>
+    readonly useActiveLeavePeriod: UnwrapRef<typeof import('../../composables/useLeaves')['useActiveLeavePeriod']>
     readonly useActivePeriod: UnwrapRef<typeof import('../../composables/useAttendancePeriods')['useActivePeriod']>
     readonly useAllEmployees: UnwrapRef<typeof import('../../composables/useEmployees')['useAllEmployees']>
     readonly useAppConfig: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/config')['useAppConfig']>
+    readonly useApproveLeaveRequest: UnwrapRef<typeof import('../../composables/useLeaves')['useApproveLeaveRequest']>
     readonly useAssignManager: UnwrapRef<typeof import('../../composables/useEmployees')['useAssignManager']>
     readonly useAssignSubordinates: UnwrapRef<typeof import('../../composables/useEmployees')['useAssignSubordinates']>
     readonly useAsyncData: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/asyncData')['useAsyncData']>
@@ -351,45 +402,86 @@ declare module 'vue' {
     readonly useAttrs: UnwrapRef<typeof import('vue')['useAttrs']>
     readonly useAuth: UnwrapRef<typeof import('../../composables/useAuth')['useAuth']>
     readonly useAuthStore: UnwrapRef<typeof import('../../stores/auth')['useAuthStore']>
+    readonly useBulkGeneratePayroll: UnwrapRef<typeof import('../../composables/usePayroll')['useBulkGeneratePayroll']>
+    readonly useCancelLeaveRequest: UnwrapRef<typeof import('../../composables/useLeaves')['useCancelLeaveRequest']>
     readonly useClockIn: UnwrapRef<typeof import('../../composables/useAttendance')['useClockIn']>
     readonly useClockOut: UnwrapRef<typeof import('../../composables/useAttendance')['useClockOut']>
     readonly useCookie: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/cookie')['useCookie']>
     readonly useCreateAttendancePeriod: UnwrapRef<typeof import('../../composables/useAttendancePeriods')['useCreateAttendancePeriod']>
     readonly useCreateEmployee: UnwrapRef<typeof import('../../composables/useEmployees')['useCreateEmployee']>
     readonly useCreateHoliday: UnwrapRef<typeof import('../../composables/useHolidays')['useCreateHoliday']>
+    readonly useCreateLeavePeriod: UnwrapRef<typeof import('../../composables/useLeaves')['useCreateLeavePeriod']>
+    readonly useCreateLeaveRequest: UnwrapRef<typeof import('../../composables/useLeaves')['useCreateLeaveRequest']>
+    readonly useCreateLeaveType: UnwrapRef<typeof import('../../composables/useLeaves')['useCreateLeaveType']>
+    readonly useCreateOvertimeRequest: UnwrapRef<typeof import('../../composables/useOvertimeCRUD')['useCreateOvertimeRequest']>
+    readonly useCreatePayroll: UnwrapRef<typeof import('../../composables/usePayroll')['useCreatePayroll']>
     readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
     readonly useDeleteAttendancePeriod: UnwrapRef<typeof import('../../composables/useAttendancePeriods')['useDeleteAttendancePeriod']>
     readonly useDeleteEmployee: UnwrapRef<typeof import('../../composables/useEmployees')['useDeleteEmployee']>
     readonly useDeleteEmployeePicture: UnwrapRef<typeof import('../../composables/useEmployeeProfile')['useDeleteEmployeePicture']>
     readonly useDeleteHoliday: UnwrapRef<typeof import('../../composables/useHolidays')['useDeleteHoliday']>
+    readonly useDeleteLeavePeriod: UnwrapRef<typeof import('../../composables/useLeaves')['useDeleteLeavePeriod']>
+    readonly useDeleteLeaveType: UnwrapRef<typeof import('../../composables/useLeaves')['useDeleteLeaveType']>
+    readonly useDeleteMyProfilePicture: UnwrapRef<typeof import('../../composables/useEmployeeProfile')['useDeleteMyProfilePicture']>
+    readonly useDeleteOvertimeRequest: UnwrapRef<typeof import('../../composables/useOvertimeCRUD')['useDeleteOvertimeRequest']>
+    readonly useDeletePayslip: UnwrapRef<typeof import('../../composables/usePayslips')['useDeletePayslip']>
     readonly useEmployee: UnwrapRef<typeof import('../../composables/useEmployees')['useEmployee']>
+    readonly useEmployeeLeaveBalances: UnwrapRef<typeof import('../../composables/useLeaves')['useEmployeeLeaveBalances']>
+    readonly useEmployeeOvertimeHistory: UnwrapRef<typeof import('../../composables/useOvertime')['useEmployeeOvertimeHistory']>
     readonly useEmployeeProfile: UnwrapRef<typeof import('../../composables/useEmployeeProfile')['useEmployeeProfile']>
     readonly useEmployeeSalaryHistory: UnwrapRef<typeof import('../../composables/useSalaries')['useEmployeeSalaryHistory']>
+    readonly useEmployeeTotalHours: UnwrapRef<typeof import('../../composables/useOvertime')['useEmployeeTotalHours']>
     readonly useEmployees: UnwrapRef<typeof import('../../composables/useEmployees')['useEmployees']>
     readonly useError: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/error')['useError']>
     readonly useFetch: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/fetch')['useFetch']>
     readonly useFetchWithAuth: UnwrapRef<typeof import('../../composables/useFetchWithAuth')['useFetchWithAuth']>
+    readonly useGeneratePayslip: UnwrapRef<typeof import('../../composables/usePayslips')['useGeneratePayslip']>
     readonly useHead: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/head')['useHead']>
     readonly useHeadSafe: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/head')['useHeadSafe']>
     readonly useHolidays: UnwrapRef<typeof import('../../composables/useHolidays')['useHolidays']>
     readonly useHydration: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/hydrate')['useHydration']>
     readonly useId: UnwrapRef<typeof import('vue')['useId']>
+    readonly useInitializeSettings: UnwrapRef<typeof import('../../composables/useSettings')['useInitializeSettings']>
     readonly useLazyAsyncData: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/asyncData')['useLazyAsyncData']>
     readonly useLazyFetch: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/fetch')['useLazyFetch']>
+    readonly useLeavePeriod: UnwrapRef<typeof import('../../composables/useLeaves')['useLeavePeriod']>
+    readonly useLeavePeriods: UnwrapRef<typeof import('../../composables/useLeaves')['useLeavePeriods']>
+    readonly useLeaveRequest: UnwrapRef<typeof import('../../composables/useLeaves')['useLeaveRequest']>
+    readonly useLeaveTypes: UnwrapRef<typeof import('../../composables/useLeaves')['useLeaveTypes']>
     readonly useLink: UnwrapRef<typeof import('vue-router')['useLink']>
     readonly useLoadingIndicator: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/loading-indicator')['useLoadingIndicator']>
     readonly useManagementChain: UnwrapRef<typeof import('../../composables/useEmployees')['useManagementChain']>
+    readonly useMarkPayrollPaid: UnwrapRef<typeof import('../../composables/usePayroll')['useMarkPayrollPaid']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
+    readonly useMyLeaveBalances: UnwrapRef<typeof import('../../composables/useLeaves')['useMyLeaveBalances']>
+    readonly useMyLeaveRequests: UnwrapRef<typeof import('../../composables/useLeaves')['useMyLeaveRequests']>
+    readonly useMyPayrolls: UnwrapRef<typeof import('../../composables/usePayroll')['useMyPayrolls']>
+    readonly useMyPayslips: UnwrapRef<typeof import('../../composables/usePayslips')['useMyPayslips']>
     readonly useMyProfile: UnwrapRef<typeof import('../../composables/useEmployeeProfile')['useMyProfile']>
     readonly useNotificationStore: UnwrapRef<typeof import('../../stores/notifications')['useNotificationStore']>
     readonly useNuxtApp: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/nuxt')['useNuxtApp']>
     readonly useNuxtData: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/asyncData')['useNuxtData']>
     readonly useNuxtDevTools: UnwrapRef<typeof import('../../node_modules/@nuxt/devtools/dist/runtime/use-nuxt-devtools')['useNuxtDevTools']>
     readonly useOrganizationTree: UnwrapRef<typeof import('../../composables/useEmployees')['useOrganizationTree']>
+    readonly useOvertimeApprovalStats: UnwrapRef<typeof import('../../composables/useOvertime')['useOvertimeApprovalStats']>
+    readonly useOvertimeApprovals: UnwrapRef<typeof import('../../composables/useOvertime')['useOvertimeApprovals']>
+    readonly useOvertimeRequestDetail: UnwrapRef<typeof import('../../composables/useOvertimeCRUD')['useOvertimeRequestDetail']>
+    readonly useOvertimeRequests: UnwrapRef<typeof import('../../composables/useOvertimeCRUD')['useOvertimeRequests']>
+    readonly usePayroll: UnwrapRef<typeof import('../../composables/usePayroll')['usePayroll']>
+    readonly usePayrollSummary: UnwrapRef<typeof import('../../composables/usePayroll')['usePayrollSummary']>
+    readonly usePayrolls: UnwrapRef<typeof import('../../composables/usePayroll')['usePayrolls']>
+    readonly usePayslip: UnwrapRef<typeof import('../../composables/usePayslips')['usePayslip']>
+    readonly usePayslipByPayroll: UnwrapRef<typeof import('../../composables/usePayslips')['usePayslipByPayroll']>
+    readonly usePayslips: UnwrapRef<typeof import('../../composables/usePayslips')['usePayslips']>
+    readonly usePendingApprovals: UnwrapRef<typeof import('../../composables/useLeaves')['usePendingApprovals']>
+    readonly usePendingOvertimeApprovals: UnwrapRef<typeof import('../../composables/useOvertime')['usePendingOvertimeApprovals']>
     readonly usePinia: UnwrapRef<typeof import('../../node_modules/@pinia/nuxt/dist/runtime/composables')['usePinia']>
     readonly usePreviewMode: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/preview')['usePreviewMode']>
+    readonly useProcessOvertimeApproval: UnwrapRef<typeof import('../../composables/useOvertime')['useProcessOvertimeApproval']>
+    readonly useProcessPayrolls: UnwrapRef<typeof import('../../composables/usePayroll')['useProcessPayrolls']>
     readonly useRegisterTenant: UnwrapRef<typeof import('../../composables/useRegisterTenant')['useRegisterTenant']>
+    readonly useRejectLeaveRequest: UnwrapRef<typeof import('../../composables/useLeaves')['useRejectLeaveRequest']>
     readonly useRequestEvent: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/ssr')['useRequestEvent']>
     readonly useRequestFetch: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/ssr')['useRequestFetch']>
     readonly useRequestHeader: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/ssr')['useRequestHeader']>
@@ -436,6 +528,7 @@ declare module 'vue' {
     readonly useServerHead: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/head')['useServerHead']>
     readonly useServerHeadSafe: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/head')['useServerHeadSafe']>
     readonly useServerSeoMeta: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/head')['useServerSeoMeta']>
+    readonly useSettings: UnwrapRef<typeof import('../../composables/useSettings')['useSettings']>
     readonly useShadowRoot: UnwrapRef<typeof import('vue')['useShadowRoot']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
     readonly useState: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/state')['useState']>
@@ -448,8 +541,13 @@ declare module 'vue' {
     readonly useUpdateEmployee: UnwrapRef<typeof import('../../composables/useEmployees')['useUpdateEmployee']>
     readonly useUpdateEmployeeProfile: UnwrapRef<typeof import('../../composables/useEmployeeProfile')['useUpdateEmployeeProfile']>
     readonly useUpdateHoliday: UnwrapRef<typeof import('../../composables/useHolidays')['useUpdateHoliday']>
+    readonly useUpdateLeavePeriod: UnwrapRef<typeof import('../../composables/useLeaves')['useUpdateLeavePeriod']>
+    readonly useUpdateLeaveType: UnwrapRef<typeof import('../../composables/useLeaves')['useUpdateLeaveType']>
     readonly useUpdateMyProfile: UnwrapRef<typeof import('../../composables/useEmployeeProfile')['useUpdateMyProfile']>
+    readonly useUpdateOvertimeRequest: UnwrapRef<typeof import('../../composables/useOvertimeCRUD')['useUpdateOvertimeRequest']>
+    readonly useUpdateSetting: UnwrapRef<typeof import('../../composables/useSettings')['useUpdateSetting']>
     readonly useUploadEmployeePicture: UnwrapRef<typeof import('../../composables/useEmployeeProfile')['useUploadEmployeePicture']>
+    readonly useUploadMyProfilePicture: UnwrapRef<typeof import('../../composables/useEmployeeProfile')['useUploadMyProfilePicture']>
     readonly useWebSocket: UnwrapRef<typeof import('../../composables/useWebSocket')['useWebSocket']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>
     readonly watchEffect: UnwrapRef<typeof import('vue')['watchEffect']>

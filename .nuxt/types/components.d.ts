@@ -24,11 +24,27 @@ interface _GlobalComponents {
   'EmployeesSubordinateManager': typeof import("../../components/employees/SubordinateManager.vue").default
   'LayoutSidebar': typeof import("../../components/layout/Sidebar.vue").default
   'LayoutTopBar': typeof import("../../components/layout/TopBar.vue").default
+  'LeavesAssignBalanceModal': typeof import("../../components/leaves/AssignBalanceModal.vue").default
+  'LeavesLeaveRequestForm': typeof import("../../components/leaves/LeaveRequestForm.vue").default
+  'LeavesLeaveTypeModal': typeof import("../../components/leaves/LeaveTypeModal.vue").default
   'NotificationsNotificationPermissionButton': typeof import("../../components/notifications/NotificationPermissionButton.vue").default
+  'OvertimeRequestForm': typeof import("../../components/overtime/OvertimeRequestForm.vue").default
+  'OvertimeStatusBadge': typeof import("../../components/overtime/OvertimeStatusBadge.vue").default
+  'PayrollBulkGenerateModal': typeof import("../../components/payroll/BulkGenerateModal.vue").default
+  'PayrollBulkGenerateResultModal': typeof import("../../components/payroll/BulkGenerateResultModal.vue").default
+  'PayrollCreatePayrollForm': typeof import("../../components/payroll/CreatePayrollForm.vue").default
+  'PayrollStats': typeof import("../../components/payroll/PayrollStats.vue").default
+  'PayrollStatusBadge': typeof import("../../components/payroll/PayrollStatusBadge.vue").default
+  'PayrollTable': typeof import("../../components/payroll/PayrollTable.vue").default
+  'PayslipsPayslipDetail': typeof import("../../components/payslips/PayslipDetail.vue").default
+  'PayslipsPayslipHistoryTable': typeof import("../../components/payslips/PayslipHistoryTable.vue").default
   'ProfileInfoItem': typeof import("../../components/profile/InfoItem.vue").default
   'ProfileForm': typeof import("../../components/profile/ProfileForm.vue").default
   'ProfilePictureUpload': typeof import("../../components/profile/ProfilePictureUpload.vue").default
   'ProfileView': typeof import("../../components/profile/ProfileView.vue").default
+  'SettingsAttendanceMap': typeof import("../../components/settings/AttendanceMap.vue").default
+  'SettingsSettingItem': typeof import("../../components/settings/SettingItem.vue").default
+  'SettingsTabContent': typeof import("../../components/settings/SettingsTabContent.vue").default
   'TablesEmployeeTable': typeof import("../../components/tables/EmployeeTable.vue").default
   'UiAlert': typeof import("../../components/ui/Alert.vue").default
   'UiAvatar': typeof import("../../components/ui/Avatar.vue").default
@@ -76,11 +92,27 @@ interface _GlobalComponents {
   'LazyEmployeesSubordinateManager': LazyComponent<typeof import("../../components/employees/SubordinateManager.vue").default>
   'LazyLayoutSidebar': LazyComponent<typeof import("../../components/layout/Sidebar.vue").default>
   'LazyLayoutTopBar': LazyComponent<typeof import("../../components/layout/TopBar.vue").default>
+  'LazyLeavesAssignBalanceModal': LazyComponent<typeof import("../../components/leaves/AssignBalanceModal.vue").default>
+  'LazyLeavesLeaveRequestForm': LazyComponent<typeof import("../../components/leaves/LeaveRequestForm.vue").default>
+  'LazyLeavesLeaveTypeModal': LazyComponent<typeof import("../../components/leaves/LeaveTypeModal.vue").default>
   'LazyNotificationsNotificationPermissionButton': LazyComponent<typeof import("../../components/notifications/NotificationPermissionButton.vue").default>
+  'LazyOvertimeRequestForm': LazyComponent<typeof import("../../components/overtime/OvertimeRequestForm.vue").default>
+  'LazyOvertimeStatusBadge': LazyComponent<typeof import("../../components/overtime/OvertimeStatusBadge.vue").default>
+  'LazyPayrollBulkGenerateModal': LazyComponent<typeof import("../../components/payroll/BulkGenerateModal.vue").default>
+  'LazyPayrollBulkGenerateResultModal': LazyComponent<typeof import("../../components/payroll/BulkGenerateResultModal.vue").default>
+  'LazyPayrollCreatePayrollForm': LazyComponent<typeof import("../../components/payroll/CreatePayrollForm.vue").default>
+  'LazyPayrollStats': LazyComponent<typeof import("../../components/payroll/PayrollStats.vue").default>
+  'LazyPayrollStatusBadge': LazyComponent<typeof import("../../components/payroll/PayrollStatusBadge.vue").default>
+  'LazyPayrollTable': LazyComponent<typeof import("../../components/payroll/PayrollTable.vue").default>
+  'LazyPayslipsPayslipDetail': LazyComponent<typeof import("../../components/payslips/PayslipDetail.vue").default>
+  'LazyPayslipsPayslipHistoryTable': LazyComponent<typeof import("../../components/payslips/PayslipHistoryTable.vue").default>
   'LazyProfileInfoItem': LazyComponent<typeof import("../../components/profile/InfoItem.vue").default>
   'LazyProfileForm': LazyComponent<typeof import("../../components/profile/ProfileForm.vue").default>
   'LazyProfilePictureUpload': LazyComponent<typeof import("../../components/profile/ProfilePictureUpload.vue").default>
   'LazyProfileView': LazyComponent<typeof import("../../components/profile/ProfileView.vue").default>
+  'LazySettingsAttendanceMap': LazyComponent<typeof import("../../components/settings/AttendanceMap.vue").default>
+  'LazySettingsSettingItem': LazyComponent<typeof import("../../components/settings/SettingItem.vue").default>
+  'LazySettingsTabContent': LazyComponent<typeof import("../../components/settings/SettingsTabContent.vue").default>
   'LazyTablesEmployeeTable': LazyComponent<typeof import("../../components/tables/EmployeeTable.vue").default>
   'LazyUiAlert': LazyComponent<typeof import("../../components/ui/Alert.vue").default>
   'LazyUiAvatar': LazyComponent<typeof import("../../components/ui/Avatar.vue").default>
