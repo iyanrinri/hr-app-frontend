@@ -1,8 +1,9 @@
-import process from 'node:process';globalThis._importMeta_=globalThis._importMeta_||{url:"file:///_entry.js",env:process.env};import { h, hasInjectionContext, getCurrentInstance, inject, ref, reactive, effectScope, isRef, isReactive, toRaw, getCurrentScope, onScopeDispose, watch, nextTick, toRefs, markRaw, computed, defineComponent, createElementBlock, shallowRef, provide, cloneVNode, defineAsyncComponent, unref, shallowReactive, Suspense, Fragment, createApp, toRef, onErrorCaptured, onServerPrefetch, createVNode, resolveDynamicComponent, isReadonly, isShallow, mergeProps, withCtx, useSSRContext } from 'vue';
-import { i as hasProtocol, k as isScriptProtocol, l as joinURL, w as withQuery, e as createError$1, s as sanitizeStatusCode, m as getContext, $ as $fetch, n as createHooks, o as executeAsync, t as toRouteMatcher, q as createRouter$1, r as defu } from '../nitro/nitro.mjs';
+import process from 'node:process';globalThis._importMeta_=globalThis._importMeta_||{url:"file:///_entry.js",env:process.env};import { h, defineComponent, shallowRef, getCurrentInstance, provide, cloneVNode, createElementBlock, hasInjectionContext, inject, ref, reactive, effectScope, isRef, isReactive, toRaw, getCurrentScope, onScopeDispose, watch, nextTick, toRefs, markRaw, computed, defineAsyncComponent, unref, shallowReactive, Suspense, Fragment, useSSRContext, createApp, mergeProps, createVNode, resolveDynamicComponent, toRef, onErrorCaptured, onServerPrefetch, isReadonly, isShallow, withCtx } from 'vue';
+import { w as withQuery, i as hasProtocol, k as isScriptProtocol, l as joinURL, e as createError$1, s as sanitizeStatusCode, m as getContext, $ as $fetch$1, n as destr, o as klona, q as createHooks, r as executeAsync, t as getRequestHeader, v as isEqual, x as toRouteMatcher, y as createRouter$1, z as defu, A as setCookie, B as getCookie, C as deleteCookie } from '../nitro/nitro.mjs';
 import { b as baseURL } from '../routes/renderer.mjs';
 import { useRoute as useRoute$1, RouterView, createMemoryHistory, createRouter, START_LOCATION } from 'vue-router';
-import { ssrRenderSuspense, ssrRenderComponent, ssrRenderVNode, ssrRenderAttrs } from 'vue/server-renderer';
+import { ssrRenderAttrs, ssrRenderVNode, ssrInterpolate, ssrRenderClass, ssrRenderComponent, ssrRenderList, ssrRenderSuspense } from 'vue/server-renderer';
+import { v4 } from 'uuid';
 import 'node:http';
 import 'node:https';
 import 'node:events';
@@ -17,8 +18,55 @@ import 'devalue';
 import 'unhead/utils';
 import 'unhead/plugins';
 
+function parse(str, options) {
+  if (typeof str !== "string") {
+    throw new TypeError("argument str must be a string");
+  }
+  const obj = {};
+  const opt = options || {};
+  const dec = opt.decode || decode;
+  let index = 0;
+  while (index < str.length) {
+    const eqIdx = str.indexOf("=", index);
+    if (eqIdx === -1) {
+      break;
+    }
+    let endIdx = str.indexOf(";", index);
+    if (endIdx === -1) {
+      endIdx = str.length;
+    } else if (endIdx < eqIdx) {
+      index = str.lastIndexOf(";", eqIdx - 1) + 1;
+      continue;
+    }
+    const key = str.slice(index, eqIdx).trim();
+    if (opt?.filter && !opt?.filter(key)) {
+      index = endIdx + 1;
+      continue;
+    }
+    if (void 0 === obj[key]) {
+      let val = str.slice(eqIdx + 1, endIdx).trim();
+      if (val.codePointAt(0) === 34) {
+        val = val.slice(1, -1);
+      }
+      obj[key] = tryDecode(val, dec);
+    }
+    index = endIdx + 1;
+  }
+  return obj;
+}
+function decode(str) {
+  return str.includes("%") ? decodeURIComponent(str) : str;
+}
+function tryDecode(str, decode2) {
+  try {
+    return decode2(str);
+  } catch {
+    return str;
+  }
+}
+
 if (!globalThis.$fetch) {
-  globalThis.$fetch = $fetch.create({
+  globalThis.$fetch = $fetch$1.create({
     baseURL: baseURL()
   });
 }
@@ -385,8 +433,80 @@ async function getRouteRules(arg) {
     return defu({}, ..._routeRulesMatcher.matchAll(path).reverse());
   }
 }
-const __nuxt_page_meta$4 = {
+const __nuxt_page_meta$s = {
   layout: "auth"
+};
+const __nuxt_page_meta$r = {
+  layout: "dashboard"
+};
+const __nuxt_page_meta$q = {
+  layout: "dashboard"
+};
+const __nuxt_page_meta$p = {
+  layout: "dashboard"
+};
+const __nuxt_page_meta$o = {
+  layout: "dashboard"
+};
+const __nuxt_page_meta$n = {
+  layout: "dashboard"
+};
+const __nuxt_page_meta$m = {
+  layout: "dashboard"
+};
+const __nuxt_page_meta$l = {
+  layout: "dashboard"
+};
+const __nuxt_page_meta$k = {
+  layout: "dashboard"
+};
+const __nuxt_page_meta$j = {
+  layout: "dashboard"
+};
+const __nuxt_page_meta$i = {
+  layout: "dashboard"
+};
+const __nuxt_page_meta$h = {
+  layout: "dashboard"
+};
+const __nuxt_page_meta$g = {
+  layout: "dashboard"
+};
+const __nuxt_page_meta$f = {
+  layout: "dashboard"
+};
+const __nuxt_page_meta$e = {
+  layout: "dashboard"
+};
+const __nuxt_page_meta$d = {
+  layout: "dashboard"
+};
+const __nuxt_page_meta$c = {
+  layout: "dashboard"
+};
+const __nuxt_page_meta$b = {
+  layout: "dashboard"
+};
+const __nuxt_page_meta$a = {
+  layout: "dashboard"
+};
+const __nuxt_page_meta$9 = {
+  layout: "dashboard"
+};
+const __nuxt_page_meta$8 = {
+  layout: "dashboard"
+};
+const __nuxt_page_meta$7 = {
+  layout: "dashboard"
+};
+const __nuxt_page_meta$6 = {
+  layout: "dashboard"
+};
+const __nuxt_page_meta$5 = {
+  layout: "dashboard"
+};
+const __nuxt_page_meta$4 = {
+  layout: "dashboard"
 };
 const __nuxt_page_meta$3 = {
   layout: "dashboard"
@@ -404,47 +524,191 @@ const _routes = [
   {
     name: "index",
     path: "/",
-    component: () => import('./index-F1stt_d8.mjs')
+    component: () => import('./index-DRPTZeZj.mjs')
   },
   {
     name: "register",
     path: "/register",
-    component: () => import('./register-DT6YeZ9U.mjs')
+    component: () => import('./register-25jq_Bi8.mjs')
   },
   {
     name: "find-workspace",
     path: "/find-workspace",
-    component: () => import('./find-workspace-Db6kef9C.mjs')
+    component: () => import('./find-workspace-CeEe1rsy.mjs')
   },
   {
     name: "tenant_slug-auth-login",
     path: "/:tenant_slug()/auth/login",
-    meta: __nuxt_page_meta$4 || {},
-    component: () => import('./login-DBaSkisp.mjs')
+    meta: __nuxt_page_meta$s || {},
+    component: () => import('./login-DmKEaLGc.mjs')
   },
   {
     name: "tenant_slug-dashboard",
     path: "/:tenant_slug()/dashboard",
-    meta: __nuxt_page_meta$3 || {},
-    component: () => import('./index-CaMhPw1j.mjs')
+    meta: __nuxt_page_meta$r || {},
+    component: () => import('./index-C6wjDgI6.mjs')
+  },
+  {
+    name: "tenant_slug-dashboard-payroll",
+    path: "/:tenant_slug()/dashboard/payroll",
+    meta: __nuxt_page_meta$q || {},
+    component: () => import('./index-DbnmJ9nl.mjs')
+  },
+  {
+    name: "tenant_slug-dashboard-profile",
+    path: "/:tenant_slug()/dashboard/profile",
+    meta: __nuxt_page_meta$p || {},
+    component: () => import('./index-CxL_MVrY.mjs')
+  },
+  {
+    name: "tenant_slug-dashboard-payroll-create",
+    path: "/:tenant_slug()/dashboard/payroll/create",
+    meta: __nuxt_page_meta$o || {},
+    component: () => import('./create-CnTlaTW2.mjs')
+  },
+  {
+    name: "tenant_slug-dashboard-payslips",
+    path: "/:tenant_slug()/dashboard/payslips",
+    meta: __nuxt_page_meta$n || {},
+    component: () => import('./index-BvzntiGY.mjs')
+  },
+  {
+    name: "tenant_slug-dashboard-settings",
+    path: "/:tenant_slug()/dashboard/settings",
+    meta: __nuxt_page_meta$m || {},
+    component: () => import('./index-yZIXBZ0Y.mjs')
+  },
+  {
+    name: "tenant_slug-dashboard-employees",
+    path: "/:tenant_slug()/dashboard/employees",
+    meta: __nuxt_page_meta$l || {},
+    component: () => import('./index-CHntTw0H.mjs')
+  },
+  {
+    name: "tenant_slug-dashboard-leaves-my",
+    path: "/:tenant_slug()/dashboard/leaves/my",
+    meta: __nuxt_page_meta$k || {},
+    component: () => import('./index-DPi1n7FA.mjs')
   },
   {
     name: "tenant_slug-dashboard-attendance",
     path: "/:tenant_slug()/dashboard/attendance",
-    meta: __nuxt_page_meta$2 || {},
-    component: () => import('./index-Ch1Ywj8G.mjs')
+    meta: __nuxt_page_meta$j || {},
+    component: () => import('./index-Deu27SVO.mjs')
+  },
+  {
+    name: "tenant_slug-dashboard-payroll-my",
+    path: "/:tenant_slug()/dashboard/payroll/my",
+    meta: __nuxt_page_meta$i || {},
+    component: () => import('./index-qfyvk4hJ.mjs')
+  },
+  {
+    name: "tenant_slug-dashboard-overtime-my",
+    path: "/:tenant_slug()/dashboard/overtime/my",
+    meta: __nuxt_page_meta$h || {},
+    component: () => import('./index-VQWgRJ0T.mjs')
+  },
+  {
+    name: "tenant_slug-dashboard-payslips-my",
+    path: "/:tenant_slug()/dashboard/payslips/my",
+    meta: __nuxt_page_meta$g || {},
+    component: () => import('./index-QzAAUG9g.mjs')
+  },
+  {
+    name: "tenant_slug-dashboard-leaves-admin",
+    path: "/:tenant_slug()/dashboard/leaves/admin",
+    meta: __nuxt_page_meta$f || {},
+    component: () => import('./index-BUsqknlQ.mjs')
+  },
+  {
+    name: "tenant_slug-dashboard-payslips-id",
+    path: "/:tenant_slug()/dashboard/payslips/:id()",
+    meta: __nuxt_page_meta$e || {},
+    component: () => import('./index-TmyR3Kn9.mjs')
+  },
+  {
+    name: "tenant_slug-dashboard-employees-id",
+    path: "/:tenant_slug()/dashboard/employees/:id()",
+    meta: __nuxt_page_meta$d || {},
+    component: () => import('./index-DupTBXSg.mjs')
+  },
+  {
+    name: "tenant_slug-dashboard-leaves-periods",
+    path: "/:tenant_slug()/dashboard/leaves/periods",
+    meta: __nuxt_page_meta$c || {},
+    component: () => import('./index-Ccm00S4_.mjs')
+  },
+  {
+    name: "tenant_slug-dashboard-overtime-admin",
+    path: "/:tenant_slug()/dashboard/overtime/admin",
+    meta: __nuxt_page_meta$b || {},
+    component: () => import('./index-Dzg7F0yr.mjs')
   },
   {
     name: "tenant_slug-dashboard-attendance-today",
     path: "/:tenant_slug()/dashboard/attendance/today",
-    meta: __nuxt_page_meta$1 || {},
-    component: () => import('./index-Cjn1-JZ8.mjs')
+    meta: __nuxt_page_meta$a || {},
+    component: () => import('./index-BOkkbvrT.mjs')
+  },
+  {
+    name: "tenant_slug-dashboard-employees-create",
+    path: "/:tenant_slug()/dashboard/employees/create",
+    meta: __nuxt_page_meta$9 || {},
+    component: () => import('./index-CGidl4w3.mjs')
+  },
+  {
+    name: "tenant_slug-dashboard-leaves-approvals",
+    path: "/:tenant_slug()/dashboard/leaves/approvals",
+    meta: __nuxt_page_meta$8 || {},
+    component: () => import('./index-D_my3QtA.mjs')
+  },
+  {
+    name: "tenant_slug-dashboard-overtime-pending",
+    path: "/:tenant_slug()/dashboard/overtime/pending",
+    meta: __nuxt_page_meta$7 || {},
+    component: () => import('./index-6kRR9lqV.mjs')
+  },
+  {
+    name: "tenant_slug-dashboard-attendance-periods-id",
+    path: "/:tenant_slug()/dashboard/attendance-periods/:id()",
+    meta: __nuxt_page_meta$6 || {},
+    component: () => import('./_id_-B6Jh9iFR.mjs')
+  },
+  {
+    name: "tenant_slug-dashboard-attendance-periods",
+    path: "/:tenant_slug()/dashboard/attendance-periods",
+    meta: __nuxt_page_meta$5 || {},
+    component: () => import('./index-fKom5L9j.mjs')
   },
   {
     name: "tenant_slug-dashboard-attendance-history",
     path: "/:tenant_slug()/dashboard/attendance/history",
+    meta: __nuxt_page_meta$4 || {},
+    component: () => import('./index-iMlPAiUl.mjs')
+  },
+  {
+    name: "tenant_slug-dashboard-overtime-approvals",
+    path: "/:tenant_slug()/dashboard/overtime/approvals",
+    meta: __nuxt_page_meta$3 || {},
+    component: () => import('./index-DGux4-ft.mjs')
+  },
+  {
+    name: "tenant_slug-dashboard-attendance-periods-create",
+    path: "/:tenant_slug()/dashboard/attendance-periods/create",
+    meta: __nuxt_page_meta$2 || {},
+    component: () => import('./create-CVk6NrUe.mjs')
+  },
+  {
+    name: "tenant_slug-dashboard-leaves-periods-id",
+    path: "/:tenant_slug()/dashboard/leaves/periods/:id()",
+    meta: __nuxt_page_meta$1 || {},
+    component: () => import('./index-DxesdzVN.mjs')
+  },
+  {
+    name: "tenant_slug-dashboard-leaves-periods-create",
+    path: "/:tenant_slug()/dashboard/leaves/periods/create",
     meta: __nuxt_page_meta || {},
-    component: () => import('./index-B8-o_fFW.mjs')
+    component: () => import('./index-BVAlYwNE.mjs')
   }
 ];
 const _wrapInTransition = (props, children) => {
@@ -1133,7 +1397,7 @@ defineComponent({
   }
 });
 const clientOnlySymbol = /* @__PURE__ */ Symbol.for("nuxt:client-only");
-defineComponent({
+const __nuxt_component_0$1 = defineComponent({
   name: "ClientOnly",
   inheritAttrs: false,
   props: ["fallback", "placeholder", "placeholderTag", "fallbackTag"],
@@ -1163,6 +1427,70 @@ defineComponent({
     };
   }
 });
+function useRequestEvent(nuxtApp) {
+  nuxtApp ||= useNuxtApp();
+  return nuxtApp.ssrContext?.event;
+}
+function useRequestFetch() {
+  return useRequestEvent()?.$fetch || globalThis.$fetch;
+}
+const CookieDefaults = {
+  path: "/",
+  watch: true,
+  decode: (val) => destr(decodeURIComponent(val)),
+  encode: (val) => encodeURIComponent(typeof val === "string" ? val : JSON.stringify(val))
+};
+function useCookie(name, _opts) {
+  const opts = { ...CookieDefaults, ..._opts };
+  opts.filter ??= (key) => key === name;
+  const cookies = readRawCookies(opts) || {};
+  let delay;
+  if (opts.maxAge !== void 0) {
+    delay = opts.maxAge * 1e3;
+  } else if (opts.expires) {
+    delay = opts.expires.getTime() - Date.now();
+  }
+  const hasExpired = delay !== void 0 && delay <= 0;
+  const cookieValue = klona(hasExpired ? void 0 : cookies[name] ?? opts.default?.());
+  const cookie = ref(cookieValue);
+  {
+    const nuxtApp = useNuxtApp();
+    const writeFinalCookieValue = () => {
+      if (opts.readonly || isEqual(cookie.value, cookies[name])) {
+        return;
+      }
+      nuxtApp._cookies ||= {};
+      if (name in nuxtApp._cookies) {
+        if (isEqual(cookie.value, nuxtApp._cookies[name])) {
+          return;
+        }
+      }
+      nuxtApp._cookies[name] = cookie.value;
+      writeServerCookie(useRequestEvent(nuxtApp), name, cookie.value, opts);
+    };
+    const unhook = nuxtApp.hooks.hookOnce("app:rendered", writeFinalCookieValue);
+    nuxtApp.hooks.hookOnce("app:error", () => {
+      unhook();
+      return writeFinalCookieValue();
+    });
+  }
+  return cookie;
+}
+function readRawCookies(opts = {}) {
+  {
+    return parse(getRequestHeader(useRequestEvent(), "cookie") || "", opts);
+  }
+}
+function writeServerCookie(event, name, value, opts = {}) {
+  if (event) {
+    if (value !== null && value !== void 0) {
+      return setCookie(event, name, value, opts);
+    }
+    if (getCookie(event, name) !== void 0) {
+      return deleteCookie(event, name, opts);
+    }
+  }
+}
 const plugin = /* @__PURE__ */ defineNuxtPlugin({
   name: "pinia",
   setup(nuxtApp) {
@@ -1181,6 +1509,72 @@ const plugin = /* @__PURE__ */ defineNuxtPlugin({
 });
 const components_plugin_z4hgvsiddfKkfXTP6M8M4zG5Cb7sGnDhcryKVM45Di4 = /* @__PURE__ */ defineNuxtPlugin({
   name: "nuxt:global-components"
+});
+const useAuthStore = /* @__PURE__ */ defineStore("auth", () => {
+  const token = useCookie("auth-token", {
+    maxAge: 60 * 60 * 24 * 7,
+    // 7 Days
+    path: "/"
+  });
+  const user = useCookie("auth-user", {
+    maxAge: 60 * 60 * 24 * 7,
+    path: "/"
+  });
+  function setAuth(newToken, newUser) {
+    token.value = newToken;
+    user.value = newUser;
+  }
+  function clearAuth() {
+    token.value = null;
+    user.value = null;
+  }
+  async function fetchProfile() {
+    if (!token.value) return;
+    const route = useRoute();
+    const tenantSlug = route.params.tenant_slug;
+    const url = tenantSlug ? `/api/${tenantSlug}/auth/profile` : "/api/auth/profile";
+    try {
+      const response = await $fetch(url, {
+        headers: {
+          Authorization: `Bearer ${token.value}`
+        }
+      });
+      if (response) {
+        user.value = response;
+      }
+    } catch (error) {
+      console.error("Failed to fetch profile", error);
+    }
+  }
+  const isAuthenticated = computed(() => !!token.value);
+  return {
+    token,
+    user,
+    setAuth,
+    clearAuth,
+    fetchProfile,
+    isAuthenticated
+  };
+});
+const auth_interceptor_4Qdm_w7V3m9dJAKgUGFrWphragXCahuW5IsMShoIV9U = /* @__PURE__ */ defineNuxtPlugin((nuxtApp) => {
+  const authStore = useAuthStore();
+  const originalFetch = globalThis.$fetch;
+  globalThis.$fetch = async (request, options = {}) => {
+    if (typeof request === "string" && request.startsWith("/api")) {
+      if (authStore.token) {
+        options.headers = {
+          ...options.headers,
+          Authorization: `Bearer ${authStore.token}`
+        };
+      }
+    }
+    try {
+      return await originalFetch(request, options);
+    } catch (error) {
+      if (error.response?.status === 401) ;
+      throw error;
+    }
+  };
 });
 const toKebabCase = (string) => string.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
 var defaultAttributes = {
@@ -20764,12 +21158,13 @@ const plugins = [
   revive_payload_server_MVtmlZaQpj6ApFmshWfUWl5PehCebzaBf2NuRMiIbms,
   plugin,
   components_plugin_z4hgvsiddfKkfXTP6M8M4zG5Cb7sGnDhcryKVM45Di4,
+  auth_interceptor_4Qdm_w7V3m9dJAKgUGFrWphragXCahuW5IsMShoIV9U,
   lucide_CjrZthZ_tp46TySO6PahcT0Fhc1PBq9p3m0BA4oa9pw
 ];
 const layouts = {
-  auth: defineAsyncComponent(() => import('./auth-Dzsl8eB1.mjs').then((m) => m.default || m)),
-  dashboard: defineAsyncComponent(() => import('./dashboard-VI-WU2_P.mjs').then((m) => m.default || m)),
-  default: defineAsyncComponent(() => import('./default-BEXL4Am-.mjs').then((m) => m.default || m))
+  auth: defineAsyncComponent(() => import('./auth-DhtEnWEW.mjs').then((m) => m.default || m)),
+  dashboard: defineAsyncComponent(() => import('./dashboard-BCu4nyEL.mjs').then((m) => m.default || m)),
+  default: defineAsyncComponent(() => import('./default-AoSVxFnH.mjs').then((m) => m.default || m))
 };
 const LayoutLoader = defineComponent({
   name: "LayoutLoader",
@@ -20981,6 +21376,125 @@ function normalizeSlot(slot, data) {
   const slotContent = slot(data);
   return slotContent.length === 1 ? h(slotContent[0]) : h(Fragment, void 0, slotContent);
 }
+const toasts = ref([]);
+const useToast = () => {
+  const add = (toast) => {
+    const id = v4();
+    const newToast = {
+      id,
+      duration: 5e3,
+      // default 5s
+      type: "info",
+      ...toast
+    };
+    toasts.value.push(newToast);
+    if (newToast.duration && newToast.duration > 0) {
+      setTimeout(() => {
+        remove(id);
+      }, newToast.duration);
+    }
+    return id;
+  };
+  const remove = (id) => {
+    const index2 = toasts.value.findIndex((t) => t.id === id);
+    if (index2 !== -1) {
+      toasts.value.splice(index2, 1);
+    }
+  };
+  const success = (message, title) => {
+    add({ message, title, type: "success" });
+  };
+  const error = (message, title) => {
+    add({ message, title, type: "error" });
+  };
+  const info = (message, title) => {
+    add({ message, title, type: "info" });
+  };
+  const warning = (message, title) => {
+    add({ message, title, type: "warning" });
+  };
+  return {
+    toasts,
+    add,
+    remove,
+    success,
+    error,
+    info,
+    warning
+  };
+};
+const _sfc_main$4 = /* @__PURE__ */ defineComponent({
+  __name: "ToastItem",
+  __ssrInlineRender: true,
+  props: {
+    toast: {}
+  },
+  setup(__props) {
+    const props = __props;
+    const icons = {
+      success: CircleCheckBig,
+      error: CircleAlert,
+      info: Info,
+      warning: TriangleAlert
+    };
+    const iconColors = {
+      success: "text-green-500",
+      error: "text-red-500",
+      info: "text-blue-500",
+      warning: "text-yellow-500"
+    };
+    return (_ctx, _push, _parent, _attrs) => {
+      _push(`<div${ssrRenderAttrs(mergeProps({ class: "pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg border bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition-all" }, _attrs))}><div class="p-4"><div class="flex items-start"><div class="flex-shrink-0">`);
+      ssrRenderVNode(_push, createVNode(resolveDynamicComponent(icons[props.toast.type || "info"]), {
+        class: ["h-6 w-6", iconColors[props.toast.type || "info"]]
+      }, null), _parent);
+      _push(`</div><div class="ml-3 w-0 flex-1 pt-0.5">`);
+      if (props.toast.title) {
+        _push(`<p class="text-sm font-medium text-gray-900">${ssrInterpolate(props.toast.title)}</p>`);
+      } else {
+        _push(`<!---->`);
+      }
+      _push(`<p class="${ssrRenderClass([{ "mt-1": props.toast.title }, "text-sm text-gray-500"])}">${ssrInterpolate(props.toast.message)}</p></div><div class="ml-4 flex flex-shrink-0"><button type="button" class="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-navy focus:ring-offset-2"><span class="sr-only">Close</span>`);
+      _push(ssrRenderComponent(unref(X), {
+        class: "h-5 w-5",
+        "aria-hidden": "true"
+      }, null, _parent));
+      _push(`</button></div></div></div></div>`);
+    };
+  }
+});
+const _sfc_setup$4 = _sfc_main$4.setup;
+_sfc_main$4.setup = (props, ctx) => {
+  const ssrContext = useSSRContext();
+  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("components/ui/ToastItem.vue");
+  return _sfc_setup$4 ? _sfc_setup$4(props, ctx) : void 0;
+};
+const _sfc_main$3 = /* @__PURE__ */ defineComponent({
+  __name: "ToastContainer",
+  __ssrInlineRender: true,
+  setup(__props) {
+    const { toasts: toasts2 } = useToast();
+    return (_ctx, _push, _parent, _attrs) => {
+      _push(`<div${ssrRenderAttrs(mergeProps({
+        "aria-live": "assertive",
+        class: "pointer-events-none fixed inset-0 flex items-end px-4 py-6 sm:items-start sm:p-6 z-50"
+      }, _attrs))}><div class="flex w-full flex-col items-center space-y-4 sm:items-end"><!--[-->`);
+      ssrRenderList(unref(toasts2), (toast) => {
+        _push(ssrRenderComponent(_sfc_main$4, {
+          key: toast.id,
+          toast
+        }, null, _parent));
+      });
+      _push(`<!--]--></div></div>`);
+    };
+  }
+});
+const _sfc_setup$3 = _sfc_main$3.setup;
+_sfc_main$3.setup = (props, ctx) => {
+  const ssrContext = useSSRContext();
+  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("components/ui/ToastContainer.vue");
+  return _sfc_setup$3 ? _sfc_setup$3(props, ctx) : void 0;
+};
 const _export_sfc = (sfc, props) => {
   const target = sfc.__vccOpts || sfc;
   for (const [key, val] of props) {
@@ -20992,6 +21506,7 @@ const _sfc_main$2 = {};
 function _sfc_ssrRender(_ctx, _push, _parent, _attrs) {
   const _component_NuxtLayout = __nuxt_component_0;
   const _component_NuxtPage = __nuxt_component_1;
+  const _component_UiToastContainer = _sfc_main$3;
   _push(`<div${ssrRenderAttrs(mergeProps({ class: "min-h-screen bg-brand-light font-sans text-brand-navy" }, _attrs))}>`);
   _push(ssrRenderComponent(_component_NuxtLayout, null, {
     default: withCtx((_, _push2, _parent2, _scopeId) => {
@@ -21005,6 +21520,7 @@ function _sfc_ssrRender(_ctx, _push, _parent, _attrs) {
     }),
     _: 1
   }, _parent));
+  _push(ssrRenderComponent(_component_UiToastContainer, null, null, _parent));
   _push(`</div>`);
 }
 const _sfc_setup$2 = _sfc_main$2.setup;
@@ -21028,8 +21544,8 @@ const _sfc_main$1 = {
     const statusMessage = _error.statusMessage ?? (is404 ? "Page Not Found" : "Internal Server Error");
     const description = _error.message || _error.toString();
     const stack = void 0;
-    const _Error404 = defineAsyncComponent(() => import('./error-404-CH0DJ5J1.mjs'));
-    const _Error = defineAsyncComponent(() => import('./error-500-GYa-zRzz.mjs'));
+    const _Error404 = defineAsyncComponent(() => import('./error-404-CgJ1jAXL.mjs'));
+    const _Error = defineAsyncComponent(() => import('./error-500-BIgCxgbS.mjs'));
     const ErrorTemplate = is404 ? _Error404 : _Error;
     return (_ctx, _push, _parent, _attrs) => {
       _push(ssrRenderComponent(unref(ErrorTemplate), mergeProps({ statusCode: unref(statusCode), statusMessage: unref(statusMessage), description: unref(description), stack: unref(stack) }, _attrs), null, _parent));
@@ -21110,5 +21626,5 @@ let entry;
 }
 const entry_default = (ssrContext) => entry(ssrContext);
 
-export { ArrowRight as A, Building2 as B, CircleCheck as C, useRouter as D, Eye as E, Filter as F, navigateTo as G, Hourglass as H, defineStore as I, resolveRouteObject as J, useRuntimeConfig as K, Lock as L, Mail as M, nuxtLinkDefaults as N, Quote as Q, RefreshCw as R, Settings as S, Tag as T, User as U, Wallet as W, _export_sfc as _, Users as a, Calendar as b, Timer as c, LogIn as d, entry_default as default, LogOut as e, MapPin as f, UserCheck as g, TriangleAlert as h, UserX as i, Bell as j, BellOff as k, Clock as l, useNuxtApp as m, asyncDataDefaults as n, createError as o, fetchDefaults as p, LayoutDashboard as q, CalendarClock as r, FileText as s, tryUseNuxtApp as t, useRoute as u, SquareCheckBig as v, ChartColumn as w, Banknote as x, ChevronRight as y, ChevronLeft as z };
+export { TriangleAlert as $, ArrowRight as A, Building2 as B, CircleCheck as C, DollarSign as D, Eye as E, FileText as F, List as G, Briefcase as H, ChevronRight as I, CircleAlert as J, useAuthStore as K, Lock as L, Mail as M, Timer as N, LogIn as O, Plus as P, Quote as Q, RefreshCw as R, Shield as S, Tag as T, User as U, LogOut as V, Wallet as W, X, MapPin as Y, UserCheck as Z, _export_sfc as _, Users as a, UserX as a0, Printer as a1, ChevronUp as a2, Network as a3, UserPlus as a4, Award as a5, History as a6, Heart as a7, CreditCard as a8, Phone as a9, Camera as aa, CloudUpload as ab, Check as ac, Trash as ad, ChartColumn as ae, BellOff as af, useNuxtApp as ag, resolveRouteObject as ah, useRuntimeConfig as ai, navigateTo as aj, nuxtLinkDefaults as ak, asyncDataDefaults as al, createError as am, fetchDefaults as an, useRequestFetch as ao, defineStore as ap, Filter as aq, LayoutDashboard as ar, CalendarClock as as, SquareCheckBig as at, Hourglass as au, ChevronLeft as av, Calendar as b, CircleCheckBig as c, Trash2 as d, entry_default as default, Banknote as e, Clock as f, TrendingDown as g, CircleX as h, Download as i, ChevronDown as j, Pencil as k, BadgeCheck as l, Calculator as m, useRouter as n, ArrowLeft as o, LoaderCircle as p, Save as q, __nuxt_component_0$1 as r, Settings as s, tryUseNuxtApp as t, useRoute as u, Bell as v, SquarePen as w, RotateCcw as x, Search as y, LayoutGrid as z };
 //# sourceMappingURL=server.mjs.map

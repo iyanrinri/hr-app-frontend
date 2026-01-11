@@ -59,6 +59,8 @@ interface _GlobalComponents {
   'UiInput': typeof import("../../components/ui/Input.vue").default
   'UiSelect': typeof import("../../components/ui/Select.vue").default
   'UiTextarea': typeof import("../../components/ui/Textarea.vue").default
+  'UiToastContainer': typeof import("../../components/ui/ToastContainer.vue").default
+  'UiToastItem': typeof import("../../components/ui/ToastItem.vue").default
   'NuxtWelcome': typeof import("../../node_modules/nuxt/dist/app/components/welcome.vue").default
   'NuxtLayout': typeof import("../../node_modules/nuxt/dist/app/components/nuxt-layout").default
   'NuxtErrorBoundary': typeof import("../../node_modules/nuxt/dist/app/components/nuxt-error-boundary.vue").default
@@ -127,6 +129,8 @@ interface _GlobalComponents {
   'LazyUiInput': LazyComponent<typeof import("../../components/ui/Input.vue").default>
   'LazyUiSelect': LazyComponent<typeof import("../../components/ui/Select.vue").default>
   'LazyUiTextarea': LazyComponent<typeof import("../../components/ui/Textarea.vue").default>
+  'LazyUiToastContainer': LazyComponent<typeof import("../../components/ui/ToastContainer.vue").default>
+  'LazyUiToastItem': LazyComponent<typeof import("../../components/ui/ToastItem.vue").default>
   'LazyNuxtWelcome': LazyComponent<typeof import("../../node_modules/nuxt/dist/app/components/welcome.vue").default>
   'LazyNuxtLayout': LazyComponent<typeof import("../../node_modules/nuxt/dist/app/components/nuxt-layout").default>
   'LazyNuxtErrorBoundary': LazyComponent<typeof import("../../node_modules/nuxt/dist/app/components/nuxt-error-boundary.vue").default>

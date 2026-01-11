@@ -214,3 +214,28 @@ export const useBulkGeneratePayroll = () => {
         error
     }
 }
+
+export const useDeletePayroll = () => {
+    const getUrl = useTenantUrl()
+    const loading = ref(false)
+
+    const mutate = async (id: string, options?: { onSuccess?: () => void, onError?: (error: any) => void }) => {
+        loading.value = true
+        try {
+            await $fetch(getUrl(`/payroll/${id}`), {
+                method: 'DELETE'
+            })
+            if (options?.onSuccess) options.onSuccess()
+        } catch (error) {
+            if (options?.onError) options.onError(error)
+            throw error
+        } finally {
+            loading.value = false
+        }
+    }
+
+    return {
+        mutate,
+        loading
+    }
+}

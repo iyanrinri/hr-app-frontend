@@ -139,6 +139,7 @@ declare global {
   const useDeleteLeaveType: typeof import('../../composables/useLeaves').useDeleteLeaveType
   const useDeleteMyProfilePicture: typeof import('../../composables/useEmployeeProfile').useDeleteMyProfilePicture
   const useDeleteOvertimeRequest: typeof import('../../composables/useOvertimeCRUD').useDeleteOvertimeRequest
+  const useDeletePayroll: typeof import('../../composables/usePayroll').useDeletePayroll
   const useDeletePayslip: typeof import('../../composables/usePayslips').useDeletePayslip
   const useEmployee: typeof import('../../composables/useEmployees').useEmployee
   const useEmployeeLeaveBalances: typeof import('../../composables/useLeaves').useEmployeeLeaveBalances
@@ -176,7 +177,6 @@ declare global {
   const useNotificationStore: typeof import('../../stores/notifications').useNotificationStore
   const useNuxtApp: typeof import('../../node_modules/nuxt/dist/app/nuxt').useNuxtApp
   const useNuxtData: typeof import('../../node_modules/nuxt/dist/app/composables/asyncData').useNuxtData
-  const useNuxtDevTools: typeof import('../../node_modules/@nuxt/devtools/dist/runtime/use-nuxt-devtools').useNuxtDevTools
   const useOrganizationTree: typeof import('../../composables/useEmployees').useOrganizationTree
   const useOvertimeApprovalStats: typeof import('../../composables/useOvertime').useOvertimeApprovalStats
   const useOvertimeApprovals: typeof import('../../composables/useOvertime').useOvertimeApprovals
@@ -248,6 +248,7 @@ declare global {
   const useState: typeof import('../../node_modules/nuxt/dist/app/composables/state').useState
   const useSubordinates: typeof import('../../composables/useEmployees').useSubordinates
   const useTemplateRef: typeof import('vue').useTemplateRef
+  const useToast: typeof import('../../composables/useToast').useToast
   const useTodayAttendance: typeof import('../../composables/useAttendance').useTodayAttendance
   const useTodayAttendanceDashboard: typeof import('../../composables/useAttendance').useTodayAttendanceDashboard
   const useTransitionState: typeof import('vue').useTransitionState
@@ -282,6 +283,9 @@ declare global {
   // @ts-ignore
   export type { Salary } from '../../composables/useSalaries'
   import('../../composables/useSalaries')
+  // @ts-ignore
+  export type { Toast } from '../../composables/useToast'
+  import('../../composables/useToast')
 }
 // for vue template auto import
 import { UnwrapRef } from 'vue'
@@ -425,6 +429,7 @@ declare module 'vue' {
     readonly useDeleteLeaveType: UnwrapRef<typeof import('../../composables/useLeaves')['useDeleteLeaveType']>
     readonly useDeleteMyProfilePicture: UnwrapRef<typeof import('../../composables/useEmployeeProfile')['useDeleteMyProfilePicture']>
     readonly useDeleteOvertimeRequest: UnwrapRef<typeof import('../../composables/useOvertimeCRUD')['useDeleteOvertimeRequest']>
+    readonly useDeletePayroll: UnwrapRef<typeof import('../../composables/usePayroll')['useDeletePayroll']>
     readonly useDeletePayslip: UnwrapRef<typeof import('../../composables/usePayslips')['useDeletePayslip']>
     readonly useEmployee: UnwrapRef<typeof import('../../composables/useEmployees')['useEmployee']>
     readonly useEmployeeLeaveBalances: UnwrapRef<typeof import('../../composables/useLeaves')['useEmployeeLeaveBalances']>
@@ -462,7 +467,6 @@ declare module 'vue' {
     readonly useNotificationStore: UnwrapRef<typeof import('../../stores/notifications')['useNotificationStore']>
     readonly useNuxtApp: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/nuxt')['useNuxtApp']>
     readonly useNuxtData: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/asyncData')['useNuxtData']>
-    readonly useNuxtDevTools: UnwrapRef<typeof import('../../node_modules/@nuxt/devtools/dist/runtime/use-nuxt-devtools')['useNuxtDevTools']>
     readonly useOrganizationTree: UnwrapRef<typeof import('../../composables/useEmployees')['useOrganizationTree']>
     readonly useOvertimeApprovalStats: UnwrapRef<typeof import('../../composables/useOvertime')['useOvertimeApprovalStats']>
     readonly useOvertimeApprovals: UnwrapRef<typeof import('../../composables/useOvertime')['useOvertimeApprovals']>
@@ -534,6 +538,7 @@ declare module 'vue' {
     readonly useState: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/state')['useState']>
     readonly useSubordinates: UnwrapRef<typeof import('../../composables/useEmployees')['useSubordinates']>
     readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>
+    readonly useToast: UnwrapRef<typeof import('../../composables/useToast')['useToast']>
     readonly useTodayAttendance: UnwrapRef<typeof import('../../composables/useAttendance')['useTodayAttendance']>
     readonly useTodayAttendanceDashboard: UnwrapRef<typeof import('../../composables/useAttendance')['useTodayAttendanceDashboard']>
     readonly useTransitionState: UnwrapRef<typeof import('vue')['useTransitionState']>

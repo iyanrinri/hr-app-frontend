@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { usePayrolls, usePayrollSummary, useProcessPayrolls, useMarkPayrollPaid, useBulkGeneratePayroll, useDeletePayroll } from '@/composables/usePayroll'
-import { useAllEmployees } from '@/composables/useEmployees'
-import { useGeneratePayslip } from '@/composables/usePayslips'
+
 import PayrollTable from '@/components/payroll/PayrollTable.vue'
 import PayrollStats from '@/components/payroll/PayrollStats.vue'
 import BulkGenerateModal from '@/components/payroll/BulkGenerateModal.vue'

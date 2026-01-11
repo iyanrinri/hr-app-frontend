@@ -59,6 +59,8 @@ export const UiDropdown: typeof import("../components/ui/Dropdown.vue").default
 export const UiInput: typeof import("../components/ui/Input.vue").default
 export const UiSelect: typeof import("../components/ui/Select.vue").default
 export const UiTextarea: typeof import("../components/ui/Textarea.vue").default
+export const UiToastContainer: typeof import("../components/ui/ToastContainer.vue").default
+export const UiToastItem: typeof import("../components/ui/ToastItem.vue").default
 export const NuxtWelcome: typeof import("../node_modules/nuxt/dist/app/components/welcome.vue").default
 export const NuxtLayout: typeof import("../node_modules/nuxt/dist/app/components/nuxt-layout").default
 export const NuxtErrorBoundary: typeof import("../node_modules/nuxt/dist/app/components/nuxt-error-boundary.vue").default
@@ -127,6 +129,8 @@ export const LazyUiDropdown: LazyComponent<typeof import("../components/ui/Dropd
 export const LazyUiInput: LazyComponent<typeof import("../components/ui/Input.vue").default>
 export const LazyUiSelect: LazyComponent<typeof import("../components/ui/Select.vue").default>
 export const LazyUiTextarea: LazyComponent<typeof import("../components/ui/Textarea.vue").default>
+export const LazyUiToastContainer: LazyComponent<typeof import("../components/ui/ToastContainer.vue").default>
+export const LazyUiToastItem: LazyComponent<typeof import("../components/ui/ToastItem.vue").default>
 export const LazyNuxtWelcome: LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/welcome.vue").default>
 export const LazyNuxtLayout: LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/nuxt-layout").default>
 export const LazyNuxtErrorBoundary: LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/nuxt-error-boundary.vue").default>

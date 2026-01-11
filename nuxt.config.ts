@@ -17,7 +17,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      socketUrl: process.env.NEXT_PUBLIC_SOCKET_URL || 'https://hr-backend.bromn.biz.id',
+      socketUrl: process.env.NEXT_PUBLIC_SOCKET_URL || '',
       apiUrl: process.env.NEXT_PUBLIC_API_URL || 'https://hr-backend.bromn.biz.id',
     }
   },
@@ -25,7 +25,12 @@ export default defineNuxtConfig({
     '/api/**': {
       proxy: process.env.NEXT_PUBLIC_API_URL 
         ? `${process.env.NEXT_PUBLIC_API_URL}/**` 
-        : 'https://hr-backend.bromn.biz.id/**'
+        : 'https://hr-backend.bromn.biz.id/**',
+    },
+    '/socket.io/**': {
+      proxy: process.env.NEXT_PUBLIC_SOCKET_URL 
+        ? `${process.env.NEXT_PUBLIC_SOCKET_URL}/socket.io/**`
+        : 'https://hr-backend.bromn.biz.id/socket.io/**'
     }
   },
   build: {

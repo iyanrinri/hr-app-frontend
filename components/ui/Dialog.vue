@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Dialog, DialogContent, DialogOverlay, DialogTitle, DialogDescription, DialogClose, TransitionRoot, TransitionChild } from '@headlessui/vue'
+import { Dialog, DialogPanel, DialogTitle, DialogDescription, TransitionRoot, TransitionChild } from '@headlessui/vue'
 import { X } from 'lucide-vue-next'
 import { cn } from "@/utils"
 
@@ -41,7 +41,7 @@ const emit = defineEmits<{
             leave-from="opacity-100 scale-100"
             leave-to="opacity-0 scale-95"
           >
-            <DialogContent
+            <DialogPanel
               :class="cn(
                 'w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all',
                 props.className
@@ -61,7 +61,7 @@ const emit = defineEmits<{
               </DialogDescription>
 
               <slot />
-            </DialogContent>
+            </DialogPanel>
           </TransitionChild>
         </div>
       </div>

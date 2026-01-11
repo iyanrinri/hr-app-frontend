@@ -1,14 +1,14 @@
 import { io, type Socket } from 'socket.io-client'
 import { useAuthStore } from '@/stores/auth'
 import { useNotificationStore } from '@/stores/notifications'
-// We might want to use a toast library compatible with Nuxt
-// For now we can use simple console logs or implement a rudimentary toast
-// Or integrate a library later. The original used react-hot-toast.
+import type { TodayAttendanceDashboard } from '@/types/attendance'
+import { useToast } from '@/composables/useToast'
 
 export const useWebSocket = () => {
     const authStore = useAuthStore()
     const notificationStore = useNotificationStore()
     const runtimeConfig = useRuntimeConfig()
+    const toast = useToast()
     
     let socket: Socket | null = null
 
@@ -42,21 +42,29 @@ export const useWebSocket = () => {
         
         if (socket?.connected) return
 
-        console.log('🔌 Initializing WebSocket for role:', user.role)
+        console.log('🔌 Initializing WebSocket connection to /attendance namespace...')
 
-        const socketUrl = runtimeConfig.public.socketUrl as string
-        
-        socket = io(`${socketUrl}/attendance`, {
+        // Force connection to relative path '/attendance' 
+        // This ensures:
+        // 1. It uses the current origin (Request URL will be domain/socket.io) -> Satisfies "socket ke origin"
+        // 2. It goes through the Nuxt proxy defined in nuxt.config.ts
+        // 3. It connects to the correct namespace '/attendance' (Critical for events)
+        socket = io('/attendance', {
+            path: '/socket.io',
             auth: {
                 token: `Bearer ${token}`
             },
+            transports: ['websocket', 'polling'], 
             reconnection: true,
             reconnectionAttempts: 5,
             reconnectionDelay: 1000
         })
 
         socket.on('connect_error', (error) => {
-             console.error('❌ [WebSocket] Connection Error:', error)
+             // Suppress annoying transport errors in console if it's just negotiating
+             if (error.message !== 'xhr poll error') {
+                console.warn('⚠️ [WebSocket] Connection Issue:', error.message)
+             }
              notificationStore.setConnected(false)
         })
 
@@ -82,6 +90,16 @@ export const useWebSocket = () => {
         socket.on('attendance.dashboard_update', (data: any) => {
              console.log('🔔 [ATTENDANCE.DASHBOARD-UPDATE]', data)
              notificationStore.incrementDashboardTrigger()
+
+             // Directly update the dashboard data cache for instant UI feedback
+             const { data: dashboardData } = useNuxtData<TodayAttendanceDashboard>('attendance-dashboard-today')
+             if (dashboardData.value) {
+                dashboardData.value = data
+                console.log('✅ Dashboard data state updated directly')
+             } else {
+                 // Initialize if empty (e.g. user landed on other page but socket is active)
+                 dashboardData.value = data
+             }
              
              const { presentEmployees = [], lateEmployees = [] } = data
              
@@ -89,17 +107,29 @@ export const useWebSocket = () => {
                  const latestEmployee = presentEmployees[0]
                  const isLate = lateEmployees.some((emp: { id: string }) => emp.id === latestEmployee.id)
                  
+                 const isClockOut = !!latestEmployee.checkOut
+                 const message = isClockOut 
+                    ? 'Someone clocked out'
+                    : (isLate ? 'Someone clocked in (Late)' : 'Someone clocked in')
+                 
                  notificationStore.addNotification({
-                     type: 'CLOCK_IN',
+                     type: isClockOut ? 'CLOCK_OUT' : 'CLOCK_IN',
                      employeeId: latestEmployee.id,
                      employeeName: `${latestEmployee.firstName} ${latestEmployee.lastName}`,
-                     timestamp: latestEmployee.checkIn || new Date().toISOString(),
-                     message: isLate 
-                        ? `${latestEmployee.firstName} ${latestEmployee.lastName} clocked in (Late)` 
-                        : `${latestEmployee.firstName} ${latestEmployee.lastName} clocked in`
+                     timestamp: (isClockOut ? latestEmployee.checkOut : latestEmployee.checkIn) || new Date().toISOString(),
+                     message
                  })
                  
-                 // TODO: Show Toast
+                 // Show Toast
+                 if (isLate && !isClockOut) {
+                    toast.warning(message, 'Late Clock In')
+                 } else {
+                    toast.success(message, isClockOut ? 'Clock Out' : 'Clock In')
+                 }
+             } else {
+                // If it was just a general update (e.g. someone clocked out, or just period update)
+                // We can show a generic toast or none. Original code showed "Dashboard updated"
+                toast.info('Attendance Dashboard Updated', 'Real-time Update')
              }
         })
 

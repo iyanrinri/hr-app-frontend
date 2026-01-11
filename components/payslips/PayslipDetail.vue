@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { formatCurrency, terbilang } from '@/utils/format' // Assuming a utils file, if not we create one or inline function
+import { formatCurrency as formatIDR, terbilang as terbilangFallback } from '@/utils'
 import { Printer, Download, Trash2, ChevronDown, ChevronUp } from 'lucide-vue-next'
 import type { Payslip } from '@/types/payslip'
 
@@ -16,10 +16,7 @@ const emit = defineEmits<{
 const isTaxDetailsOpen = ref(false)
 const isCompanyDetailsOpen = ref(false)
 
-// In Nuxt/Vue, utility functions should likely be available. 
-// If not, I will inline a simple formatCurrency if it's not present globally.
-// Assuming user might not have `terbilang` in utils, let's keep it simple or mock it.
-// I'll check if utils exist later or just use Intl directly.
+
 
 // Calculate totalGross if not provided
 const totalGross = computed(() => props.payslip.totalGross || 
@@ -42,19 +39,7 @@ const handlePrint = () => {
     window.print()
 }
 
-// Simple IDR format if strict util not found
-const formatIDR = (val: string | number) => {
-    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(Number(val))
-}
 
-// Simple Terbilang (Number to Words) fallback or placeholder if lib missing
-// We can use a simple implementation or just display number
-const terbilangFallback = (val: number) => {
-   // A full implementation is long, let's assume we skip or put a placeholder if no lib.
-   // Or I can add a basic helper method here if requested.
-   // For now, I'll use a placeholder text.
-   return "Rupiah" 
-}
 
 </script>
 
