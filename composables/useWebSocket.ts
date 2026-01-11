@@ -54,7 +54,7 @@ export const useWebSocket = () => {
             auth: {
                 token: `Bearer ${token}`
             },
-            transports: ['websocket', 'polling'], 
+            transports: ['polling', 'websocket'], 
             reconnection: true,
             reconnectionAttempts: 5,
             reconnectionDelay: 1000
