@@ -1,10 +1,8 @@
-# Multi-stage build for Next.js application
+# Multi-stage build for Nuxt.js application
 FROM node:20-slim AS base
 
 # Install dependencies only when needed
 FROM base AS deps
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-# RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 # Copy package files
@@ -20,38 +18,36 @@ COPY . .
 # Build arguments for environment variables
 ARG NEXT_PUBLIC_SOCKET_URL
 ARG NEXT_PUBLIC_API_URL
+ARG NUXT_PUBLIC_API_URL
 
 # Set environment variables for build
 ENV NEXT_PUBLIC_SOCKET_URL=$NEXT_PUBLIC_SOCKET_URL
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
-ENV LOG_PATH=/tmp/app.log
-ENV NEXT_TELEMETRY_DISABLED=1
+# Include Nuxt specific env vars if needed
+ENV NUXT_PUBLIC_API_URL=$NUXT_PUBLIC_API_URL
 
 # Build the application
 RUN npm run build
 
-# Production image, copy all the files and run next
+# Production image, copy all the files and run nuxt
 FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_NO_WARNINGS=1
-ENV UV_THREADPOOL_SIZE=4
 
 RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+RUN adduser --system --uid 1001 nuxtjs
 
 # Copy built application
-COPY --from=builder /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+# Nuxt 3 builds to .output
+COPY --from=builder --chown=nuxtjs:nodejs /app/.output ./.output
 
-USER nextjs
+USER nuxtjs
 
 EXPOSE 3000
 
 ENV PORT=3000
-ENV HOSTNAME="0.0.0.0"
+ENV HOST="0.0.0.0"
 
-CMD ["node", "server.js"]
+CMD ["node", ".output/server/index.mjs"]
